@@ -76,6 +76,7 @@ const int audioHeapSize = 0x14D800;
 
 #if TARGET_PC
 bool dusk::IsShuttingDown = false;
+bool dusk::IsSpeedUnlocked = false;
 #endif
 
 s32 LOAD_COPYDATE(void*) {
@@ -157,6 +158,11 @@ void main01(void) {
             switch (event->type) {
             case AURORA_NONE:
                 goto eventsDone;
+            case AURORA_SDL_EVENT:
+                if (event->sdl.type == SDL_EVENT_KEY_DOWN && !event->sdl.key.repeat && event->sdl.key.key == SDLK_TAB) {
+                    dusk::IsSpeedUnlocked = !dusk::IsSpeedUnlocked;
+                }
+                break;
             case AURORA_WINDOW_RESIZED:
                 mDoGph_gInf_c::setWindowSize(event->windowSize);
                 break;
@@ -192,9 +198,11 @@ void main01(void) {
 
         aurora_end_frame();
 
-        #if TARGET_PC
-        frameLimiter.Sleep(DUSK_FRAME_PERIOD);
-        #endif
+#if TARGET_PC
+        if (!dusk::IsSpeedUnlocked) {
+            frameLimiter.Sleep(DUSK_FRAME_PERIOD);
+        }
+#endif
     } while (true);
 
     exit:;
