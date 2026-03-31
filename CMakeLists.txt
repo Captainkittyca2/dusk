@@ -103,7 +103,12 @@ target_include_directories(game_debug PUBLIC
 target_link_libraries(game_debug PUBLIC aurora::core aurora::gx aurora::gd aurora::si aurora::vi aurora::pad aurora::mtx aurora::os aurora::dvd aurora::card)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_library(game SHARED ${DOLZEL_FILES} ${Z2AUDIOLIB_FILES} ${SSYSTEM_FILES} ${JSYSTEM_FILES} ${REL_FILES} ${DUSK_FILES} ${DOLPHIN_FILES}
+if (BUILD_SHARED_LIBS)
+    set(_game_lib_type SHARED)
+else ()
+    set(_game_lib_type STATIC)
+endif ()
+add_library(game ${_game_lib_type} ${DOLZEL_FILES} ${Z2AUDIOLIB_FILES} ${SSYSTEM_FILES} ${JSYSTEM_FILES} ${REL_FILES} ${DUSK_FILES} ${DOLPHIN_FILES}
         src/dusk/imgui/ImGuiStubLog.cpp
         src/dusk/imgui/ImGuiAudio.cpp)
 
@@ -115,6 +120,56 @@ add_executable(dusk src/dusk/main.cpp)
 target_compile_definitions(dusk PRIVATE TARGET_PC AVOID_UB=1 VERSION=0)
 target_include_directories(dusk PRIVATE include)
 target_link_libraries(dusk PRIVATE game aurora::main)
+
+if (APPLE)
+    if (IOS)
+        set(DUSK_RESOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios)
+        set(DUSK_INFO_PLIST ${DUSK_RESOURCE_DIR}/Info.plist.in)
+        file(GLOB_RECURSE DUSK_RESOURCE_FILES "${DUSK_RESOURCE_DIR}/Base.lproj/*")
+    endif ()
+    if (IOS OR TVOS)
+        target_sources(dusk PRIVATE ${DUSK_RESOURCE_FILES})
+        foreach (FILE ${DUSK_RESOURCE_FILES})
+            file(RELATIVE_PATH NEW_FILE "${DUSK_RESOURCE_DIR}" ${FILE})
+            get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
+            set_property(SOURCE ${FILE} PROPERTY MACOSX_PACKAGE_LOCATION "Resources/${NEW_FILE_PATH}")
+        endforeach ()
+        set(DUSK_BUNDLE_NAME Dusk)
+        set(DUSK_BUNDLE_IDENTIFIER dev.decomp.dusk)
+        set(DUSK_BUNDLE_VERSION "1")
+        set(DUSK_BUNDLE_SHORT_VERSION "1.0")
+        set_target_properties(
+            dusk PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_BUNDLE_NAME ${DUSK_BUNDLE_NAME}
+            MACOSX_BUNDLE_GUI_IDENTIFIER ${DUSK_BUNDLE_IDENTIFIER}
+            MACOSX_BUNDLE_BUNDLE_VERSION ${DUSK_BUNDLE_VERSION}
+            MACOSX_BUNDLE_SHORT_VERSION_STRING ${DUSK_BUNDLE_SHORT_VERSION}
+            OUTPUT_NAME dusk
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Apple Development"
+            XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "N98X7L627T"
+            XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Automatic"
+            XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "YES"
+            XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "YES"
+        )
+        if (CMAKE_GENERATOR STREQUAL "Xcode")
+            set_target_properties(dusk PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${DUSK_INFO_PLIST})
+        elseif (DEFINED DUSK_INFO_PLIST)
+            set(MACOSX_BUNDLE_EXECUTABLE_NAME dusk)
+            set(MACOSX_BUNDLE_GUI_IDENTIFIER ${DUSK_BUNDLE_IDENTIFIER})
+            set(MACOSX_BUNDLE_BUNDLE_NAME ${DUSK_BUNDLE_NAME})
+            set(MACOSX_BUNDLE_BUNDLE_VERSION ${DUSK_BUNDLE_VERSION})
+            set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${DUSK_BUNDLE_SHORT_VERSION})
+            set(DUSK_GENERATED_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/dusk.Info.plist)
+            configure_file(${DUSK_INFO_PLIST} ${DUSK_GENERATED_INFO_PLIST})
+            add_custom_command(
+                TARGET dusk POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DUSK_GENERATED_INFO_PLIST} $<TARGET_FILE_DIR:dusk>/Info.plist
+                VERBATIM
+            )
+        endif ()
+    endif ()
+endif ()
 
 include(extern/aurora/cmake/AuroraCopyRuntimeDLLs.cmake)
 aurora_copy_runtime_dlls(dusk game)

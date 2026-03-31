@@ -7,6 +7,8 @@
 void aurora_log_callback(AuroraLogLevel level, const char* module, const char* message, unsigned int len);
 
 namespace dusk {
+    bool InitializeLogFile();
+    void ShutdownLogFile();
     void SendToStubLog(AuroraLogLevel level, const char* module, const char* message);
 }
 

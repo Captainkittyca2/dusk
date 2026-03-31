@@ -54,8 +54,12 @@
 #include <aurora/main.h>
 #include <aurora/dvd.h>
 #include <dolphin/dvd.h>
+#include <SDL3/SDL.h>
 
 #include "cxxopts.hpp"
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
 
 // --- GLOBALS ---
 s8 mDoMain::developmentMode = -1;
@@ -192,7 +196,7 @@ void main01(void) {
 
         aurora_end_frame();
 
-        #if TARGET_PC
+        #if TARGET_PC && !TARGET_OS_IOS
         frameLimiter.Sleep(DUSK_FRAME_PERIOD);
         #endif
     } while (true);
@@ -272,16 +276,28 @@ int game_main(int argc, char* argv[]) {
     config.windowWidth = 608 * 2;
     config.windowHeight = 448 * 2;
     config.desiredBackend = ParseAuroraBackend(parsed_arg_options["backend"].as<std::string>());
-    config.configPath = ".";
     config.logCallback = &aurora_log_callback;
+#if TARGET_OS_IOS
+    config.logLevel = LOG_DEBUG;
+#else
     config.logLevel = (AuroraLogLevel)parsed_arg_options["log-level"].as<uint8_t>();
+#endif
     config.mem1Size = 256 * 1024 * 1024;
     config.mem2Size = 24 * 1024 * 1024;
     config.allowJoystickBackgroundEvents = true;
 
+    dusk::InitializeLogFile();
     auroraInfo = aurora_initialize(argc, argv, &config);
 
-    const auto& dvd_path = parsed_arg_options["dvd"].as<std::string>();
+    std::string dvd_path = parsed_arg_options["dvd"].as<std::string>();
+#if TARGET_OS_IOS
+    if (dvd_path == "game.iso") {
+        // On iOS, look for the game image in the app's Documents directory
+        if (auroraInfo.configPath) {
+            dvd_path = std::string(auroraInfo.configPath) + "game.rvz";
+        }
+    }
+#endif
     DuskLog.info("Loading DVD image: {}", dvd_path);
     if (!aurora_dvd_open(dvd_path.c_str())) {
         DuskLog.fatal("Failed to open DVD image: {}", dvd_path);
@@ -315,6 +331,7 @@ int game_main(int argc, char* argv[]) {
     dusk::IsShuttingDown = true;
 
     aurora_shutdown();
+    dusk::ShutdownLogFile();
 
     return 0;
 }
