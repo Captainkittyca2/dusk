@@ -23,8 +23,8 @@ namespace dusk {
 		bool m_isHidden = false;
 
 		ImGuiMenuGame m_menuGame;
-        ImGuiMenuTools m_menuTools;
 		ImGuiMenuEnhancements m_menuEnhancements;
+        ImGuiMenuTools m_menuTools;
 	};
 
 	extern ImGuiConsole g_imguiConsole;
