@@ -28,7 +28,7 @@ public:
     static u32 getTrigR(u32 pad) { return getTrig(pad) & PAD_TRIGGER_R; }
     static u32 getTrigA(u32 pad) { return getTrig(pad) & PAD_BUTTON_A; }
     static u32 getTrigB(u32 pad) { return getTrig(pad) & PAD_BUTTON_B; }
-    static u32 getTrigZ(u32 pad) { return getTrig(pad) & PAD_TRIGGER_Z; }
+    static u32 getTrigZ(u32 pad) { return getTrig(pad) & PAD_BUTTON_Z; }
     static u32 getTrigY(u32 pad) { return getTrig(pad) & PAD_BUTTON_Y; }
     static u32 getTrigX(u32 pad) { return getTrig(pad) & PAD_BUTTON_X; }
     static u32 getTrigStart(u32 pad) { return getTrig(pad) & PAD_BUTTON_START; }
@@ -43,7 +43,7 @@ public:
     static u32 getHoldR(u32 pad) { return getHold(pad) & PAD_TRIGGER_R; }
     static u32 getHoldA(u32 pad) { return getHold(pad) & PAD_BUTTON_A; }
     static u32 getHoldB(u32 pad) { return getHold(pad) & PAD_BUTTON_B; }
-    static u32 getHoldZ(u32 pad) { return getHold(pad) & PAD_TRIGGER_Z; }
+    static u32 getHoldZ(u32 pad) { return getHold(pad) & PAD_BUTTON_Z; }
     static u32 getHoldY(u32 pad) { return getHold(pad) & PAD_BUTTON_Y; }
     static u32 getHoldX(u32 pad) { return getHold(pad) & PAD_BUTTON_X; }
     static u32 getHoldStart(u32 pad) { return getHold(pad) & PAD_BUTTON_START; }

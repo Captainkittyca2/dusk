@@ -421,7 +421,7 @@ static int developKeyCheck(u32 btnTrig, u32 btnHold) {
     static u8 key_ganon;
     static u8 key_zelda;
 
-    if (btnHold == (PAD_TRIGGER_L | PAD_TRIGGER_R | PAD_TRIGGER_Z | PAD_BUTTON_DOWN) &&
+    if (btnHold == (PAD_TRIGGER_L | PAD_TRIGGER_R | PAD_BUTTON_Z | PAD_BUTTON_DOWN) &&
         btnTrig == PAD_BUTTON_DOWN) {
         if (key_link == 3 && key_ganon == 6 && key_zelda == 5) {
             mDoMain::developmentMode = 1;
@@ -440,7 +440,7 @@ static int developKeyCheck(u32 btnTrig, u32 btnHold) {
         key_ganon++;
     }
 
-    if (btnHold == (PAD_TRIGGER_Z | PAD_BUTTON_LEFT) && btnTrig == PAD_TRIGGER_Z) {
+    if (btnHold == (PAD_BUTTON_Z | PAD_BUTTON_LEFT) && btnTrig == PAD_BUTTON_Z) {
         key_zelda++;
     }
 
@@ -633,7 +633,7 @@ static void fault_callback_scroll(u16, OSContext* p_context, u32, u32) {
                 waitRetrace = true;
             }
 
-            if (btnTrig == PAD_TRIGGER_Z) {
+            if (btnTrig == PAD_BUTTON_Z) {
                 JUTConsole* sysConsole = JFWSystem::getSystemConsole();
                 JUTConsole* directConsole = JUTConsoleManager::getManager()->getDirectConsole();
                 if (directConsole != sysConsole) {

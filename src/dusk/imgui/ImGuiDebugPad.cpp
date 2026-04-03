@@ -25,7 +25,7 @@ void DuskDebugPad() {
     }
 
     if (ImGui::IsKeyPressed(ImGuiKey_O)) {
-        mDoCPd_c::getCpadInfo(PAD_1).mPressedButtonFlags |= PAD_TRIGGER_Z;
+        mDoCPd_c::getCpadInfo(PAD_1).mPressedButtonFlags |= PAD_BUTTON_Z;
     }
 
     if (ImGui::IsKeyPressed(ImGuiKey_Keypad8)) {
