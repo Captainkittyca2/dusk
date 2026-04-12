@@ -53,7 +53,9 @@ struct UserSettings {
 
         // Graphics
         ConfigVar<bool> enableBloom;
-        ConfigVar<bool> useWaterProjectionOffset;
+        ConfigVar<bool> enableWaterRefraction;
+        ConfigVar<bool> enableFrameInterpolation;
+        ConfigVar<int> shadowResolutionMultiplier;
 
         // Audio
         ConfigVar<bool> noLowHpSound;
@@ -63,6 +65,7 @@ struct UserSettings {
         ConfigVar<bool> enableFastIronBoots;
         ConfigVar<bool> canTransformAnywhere;
         ConfigVar<bool> fastSpinner;
+        ConfigVar<bool> freeMagicArmor;
 
         // Technical
         ConfigVar<bool> restoreWiiGlitches;
@@ -70,6 +73,14 @@ struct UserSettings {
         // Controls
         ConfigVar<bool> enableTurboKeybind;
     } game;
+
+    struct {
+        ConfigVar<std::string> isoPath;
+        ConfigVar<std::string> graphicsBackend;
+        ConfigVar<bool> skipPreLaunchUI;
+        ConfigVar<bool> showPipelineCompilation;
+        ConfigVar<bool> wasPresetChosen;
+    } backend;
 };
 
 UserSettings& getSettings();

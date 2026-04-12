@@ -821,12 +821,20 @@ static void dKy_FiveSenses_fullthrottle_dark_static1() {
             }
 
             if (kankyo->senses_ef_emitter1 != NULL) {
+                #if TARGET_PC
+                kankyo->senses_ef_emitter1->setGlobalParticleScale(mDoGph_gInf_c::getScale(), 1.0f);
+                #endif
+
                 kankyo->senses_ef_emitter1->setGlobalTranslation(particle_pos.x, particle_pos.y,
                                                                  particle_pos.z);
                 kankyo->senses_ef_emitter1->setGlobalAlpha(kankyo->senses_effect_strength * 255.0f);
             }
 
             if (kankyo->senses_ef_emitter2 != NULL) {
+                #if TARGET_PC
+                kankyo->senses_ef_emitter2->setGlobalParticleScale(mDoGph_gInf_c::getScale(), 1.0f);
+                #endif
+
                 kankyo->senses_ef_emitter2->setGlobalTranslation(particle_pos.x, particle_pos.y,
                                                                  particle_pos.z);
 
@@ -10986,9 +10994,9 @@ void dKy_depth_dist_set(void* process_p) {
 
             if ((sp30.x >= 0.0f && sp30.x < FB_WIDTH) && (sp30.y >= 0.0f &&
                 #if DEBUG
-                sp30.y < 608.0f
+                sp30.y < FB_WIDTH_BASE
                 #else
-                sp30.y < 600.0f
+                sp30.y < (FB_WIDTH_BASE - 8)
                 #endif
             )) {
                 cXyz sp18;
@@ -11385,11 +11393,7 @@ void dKy_bg_MAxx_proc(void* bg_model_p) {
                             if (mat_name[6] == '2') {
                                 C_MTXLightPerspective(sp1D8, dComIfGd_getView()->fovy,
                                                       camera_p->view.aspect, 1.0f, 1.0f,
-#if TARGET_PC
-                                                      dusk::getSettings().game.useWaterProjectionOffset ? -0.01f : 0.0f, 0.0f);
-#else
                                                       -0.01f, 0.0f);
-#endif
                             } else {
                                 C_MTXLightPerspective(sp1D8, dComIfGd_getView()->fovy,
                                                       camera_p->view.aspect, 0.49f, -0.49f, 0.5f, 0.5f);
