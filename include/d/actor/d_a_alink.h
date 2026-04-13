@@ -4551,6 +4551,7 @@ public:
 #if TARGET_PC
     void handleArmorsQuickToggle();
     void handleQuickTransform();
+    bool checkGyroAimItemContext();
 #endif
 };  // Size: 0x385C
 

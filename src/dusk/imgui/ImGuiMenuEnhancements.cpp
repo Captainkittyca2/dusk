@@ -58,6 +58,11 @@ namespace dusk {
                     ImGui::SetTooltip("Hides the TV calibration screen shown when loading a save.");
                 }
 
+                config::ImGuiCheckbox("Skip Warning Screen", getSettings().game.skipWarningScreen);
+                if (ImGui::IsItemHovered()) {
+                    ImGui::SetTooltip("Skips the warning screen shown when loading the game.");
+                }
+
                 config::ImGuiCheckbox("Instant Saves", getSettings().game.instantSaves);
                 if (ImGui::IsItemHovered()) {
                     ImGui::SetTooltip("Skip the delay when writing to the Memory Card.");
@@ -112,6 +117,21 @@ namespace dusk {
                 ImGui::EndMenu();
             }
 
+            if (ImGui::BeginMenu("Input")) {
+                config::ImGuiCheckbox("Gyro Aim", getSettings().game.enableGyroAim);
+                if (ImGui::IsItemHovered()) {
+                    ImGui::SetTooltip("Enables the gyroscope on supported controllers while aiming the\n"
+                                      "Slingshot, Gale Boomerang, Hero's Bow, Clawshot(s), Ball and Chain, and Dominion Rod.");
+                }
+
+                config::ImGuiSliderFloat("Gyro Pitch Sensitivity", getSettings().game.gyroAimSensitivityY, 0.25f, 4.0f, "%.2f");
+                config::ImGuiSliderFloat("Gyro Yaw Sensitivity", getSettings().game.gyroAimSensitivityX, 0.25f, 4.0f, "%.2f");
+                config::ImGuiCheckbox("Invert Gyro Pitch", getSettings().game.gyroAimInvertPitch);
+                config::ImGuiCheckbox("Invert Gyro Yaw", getSettings().game.gyroAimInvertYaw);
+
+                ImGui::EndMenu();
+            }
+
             if (ImGui::BeginMenu("Cheats")) {
                 config::ImGuiCheckbox("Fast Iron Boots", getSettings().game.enableFastIronBoots);
 
@@ -135,6 +155,12 @@ namespace dusk {
 
             if (ImGui::BeginMenu("Difficulty")) {
                 config::ImGuiSliderInt("Damage Multiplier", getSettings().game.damageMultiplier, 1, 8, "x%d");
+
+                config::ImGuiCheckbox("No Heart Drops", getSettings().game.noHeartDrops);
+                if (ImGui::IsItemHovered()) {
+                    ImGui::SetTooltip("Hearts will never drop from enemies,\n"
+                                      "pots and various other places.");
+                }
 
                 config::ImGuiCheckbox("Instant Death", getSettings().game.instantDeath);
                 if (ImGui::IsItemHovered()) {

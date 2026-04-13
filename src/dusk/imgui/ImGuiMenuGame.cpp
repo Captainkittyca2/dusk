@@ -62,7 +62,30 @@ namespace dusk {
                     config::Save();
                 }
 
-                config::ImGuiCheckbox("Native Bloom", getSettings().game.enableBloom);
+                constexpr const char* bloomModeNames[] = {"Off", "Classic", "Dusk"};
+                int bloomMode = static_cast<int>(getSettings().game.bloomMode.getValue());
+                if (ImGui::BeginCombo("Bloom", bloomModeNames[bloomMode])) {
+                    for (int i = 0; i < IM_ARRAYSIZE(bloomModeNames); i++) {
+                        const bool selected = bloomMode == i;
+                        if (ImGui::Selectable(bloomModeNames[i], selected)) {
+                            getSettings().game.bloomMode.setValue(static_cast<BloomMode>(i));
+                            config::Save();
+                        }
+                        if (selected) {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                bool bloomOff = bloomMode == static_cast<int>(BloomMode::Off);
+                if (bloomOff) ImGui::BeginDisabled();
+                float mult = getSettings().game.bloomMultiplier.getValue();
+                if (ImGui::SliderFloat("Bloom Brightness", &mult, 0.0f, 1.0f, "%.2f")) {
+                    getSettings().game.bloomMultiplier.setValue(mult);
+                    config::Save();
+                }
+                if (bloomOff) ImGui::EndDisabled();
 
                 config::ImGuiCheckbox("Enable Water Refraction", getSettings().game.enableWaterRefraction);
 
