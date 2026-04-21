@@ -21,6 +21,7 @@ UserSettings g_userSettings = {
 
     .game = {
         // Quality of Life
+        .enableArmorsQuickToggle {"game.enableArmorsQuickToggle", false},
         .enableQuickTransform {"game.enableQuickTransform", false},
         .hideTvSettingsScreen {"game.hideTvSettingsScreen", false},
         .skipWarningScreen {"game.skipWarningScreen", false},
@@ -39,6 +40,8 @@ UserSettings g_userSettings = {
         .sunsSong {"game.sunsSong", false},
 
         // Preferences
+        .enableTWWHDArmor {"game.enableTWWHDArmor", false},
+        .enableManualShielding {"game.enableManualShielding", false},
         .enableMirrorMode {"game.enableMirrorMode", false},
         .invertCameraXAxis {"game.invertCameraXAxis", false},
         .disableMainHUD {"game.disableMainHUD", false},
@@ -134,6 +137,9 @@ void registerSettings() {
     Register(g_userSettings.game.instantSaves);
     Register(g_userSettings.game.instantText);
     Register(g_userSettings.game.sunsSong);
+    Register(g_userSettings.game.enableTWWHDArmor);
+    Register(g_userSettings.game.enableManualShielding);
+    Register(g_userSettings.game.enableArmorsQuickToggle);
     Register(g_userSettings.game.enableMirrorMode);
     Register(g_userSettings.game.invertCameraXAxis);
     Register(g_userSettings.game.disableMainHUD);

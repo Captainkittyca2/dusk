@@ -6918,7 +6918,7 @@ const daAlink_BckData* daAlink_c::getMainBckData(daAlink_c::daAlink_ANM i_anmID)
         }
     }
 
-    if (checkUpperGuardAnime() && i_anmID < ANM_SWIM_WAIT) {
+    if (checkUpperGuardAnime() && i_anmID < ANM_SWIM_WAIT && (!dusk::getSettings().game.enableManualShielding || mDoCPd_c::getHoldLockR(PAD_1))) {
         return &m_mainBckShield[i_anmID];
     }
 
@@ -9358,7 +9358,9 @@ BOOL daAlink_c::midnaTalkTrigger() const {
 }
 
 BOOL daAlink_c::swordSwingTrigger() {
-    return swordTrigger();
+    if (!dusk::getSettings().game.enableManualShielding || !mDoCPd_c::getHoldLockR(PAD_1))
+        return swordTrigger();
+    return false;
 }
 
 void daAlink_c::setItemActionButtonStatus(u8 i_status) {
@@ -11875,10 +11877,19 @@ BOOL daAlink_c::checkItemAction() {
             ) && ((mLinkAcch.ChkGroundHit() || checkMagneBootsOn()) && dComIfGp_getRStatus() == 0)
             )
         {
-            setRStatus(BUTTON_STATUS_SHIELD_ATTACK);
+            if (!dusk::getSettings().game.enableManualShielding) {
+                setRStatus(BUTTON_STATUS_SHIELD_ATTACK);
 
-            if (spActionTrigger()) {
-                return procGuardAttackInit();
+                if (spActionTrigger()) {
+                    return procGuardAttackInit();
+                }
+            } else {
+                if (mDoCPd_c::getHoldLockR(PAD_1)) {
+                    setBStatus(BUTTON_STATUS_SHIELD_ATTACK);
+
+                    if (mDoCPd_c::getTrigB(PAD_1))
+                        return procGuardAttackInit();
+                }
             }
         }
     }
@@ -18650,7 +18661,7 @@ int daAlink_c::execute() {
 #if TARGET_PC
             // This handles rupee drain and transitions between rupees/no rupees
             // We can skip all of that if the magic armor doesn't use rupees
-            if (!dusk::getSettings().game.freeMagicArmor && checkMagicArmorWearAbility() && mClothesChangeWaitTimer == 0) {
+            if (!dusk::getSettings().game.freeMagicArmor && !dusk::getSettings().game.enableTWWHDArmor && checkMagicArmorWearAbility() && mClothesChangeWaitTimer == 0) {
 #else
             if (checkMagicArmorWearAbility() && mClothesChangeWaitTimer == 0) {
 #endif
@@ -18845,6 +18856,10 @@ int daAlink_c::execute() {
             l_jumpTop = var_f27;
         }
     }
+    #endif
+
+    #if TARGET_PC
+    handleArmorsQuickToggle();
     #endif
 
     return 1;

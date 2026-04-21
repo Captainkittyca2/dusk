@@ -1226,6 +1226,7 @@ int dComIfG_changeOpeningScene(scene_class* i_scene, s16 i_procName) {
 }
 
 dComIfG_inf_c g_dComIfG_gameInfo;
+bool armorTimerFast = false;
 
 BOOL dComIfG_resetToOpening(scene_class* i_scene) {
     #if PLATFORM_WII || VERSION == VERSION_SHIELD_DEBUG

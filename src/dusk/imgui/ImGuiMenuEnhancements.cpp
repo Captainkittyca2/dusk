@@ -5,6 +5,7 @@
 #include "dusk/settings.h"
 
 namespace dusk {
+    MeterColorsOverride s_meterColorsOverride;
     ImGuiMenuEnhancements::ImGuiMenuEnhancements() {}
 
     void ImGuiMenuEnhancements::draw() {

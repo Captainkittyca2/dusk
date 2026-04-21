@@ -1054,6 +1054,7 @@ extern GXColor g_blackColor;
 extern GXColor g_clearColor;
 extern GXColor g_whiteColor;
 extern GXColor g_saftyWhiteColor;
+extern bool armorTimerFast;
 
 int dComLbG_PhaseHandler(request_of_phase_process_class*, request_of_phase_process_fn*,
                          void*);

@@ -1366,6 +1366,10 @@ set(DUSK_FILES
         src/dusk/imgui/ImGuiBloomWindow.hpp
         src/dusk/imgui/ImGuiMenuTools.cpp
         src/dusk/imgui/ImGuiMenuTools.hpp
+        src/dusk/imgui/ImGuiCatDeluxe.cpp
+        src/dusk/imgui/ImGuiCatDeluxe.hpp
+        src/dusk/imgui/ImGuiMetersColor.cpp
+        src/dusk/imgui/ImGuiMetersColor.hpp
         src/dusk/imgui/ImGuiMenuEnhancements.cpp
         src/dusk/imgui/ImGuiMenuEnhancements.hpp
         src/dusk/imgui/ImGuiPreLaunchWindow.cpp

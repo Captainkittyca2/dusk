@@ -12,6 +12,7 @@
 #include "ImGuiMenuEnhancements.hpp"
 #include "ImGuiMenuGame.hpp"
 #include "ImGuiMenuTools.hpp"
+#include "ImGuiCatDeluxe.hpp"
 #include "ImGuiPreLaunchWindow.hpp"
 #include "imgui.h"
 
@@ -58,6 +59,8 @@ private:
     // Keep always last
     ImGuiMenuTools m_menuTools;
 
+    ImGuiCatDeluxe m_catDeluxe;
+
     void ShowToasts();
     void ShowPipelineProgress();
     void UpdateDragScroll();
@@ -77,6 +80,8 @@ void ImGuiEndGroupPanel();
 void ImGuiTextCenter(std::string_view text);
 bool ImGuiButtonCenter(std::string_view text);
 float ImGuiScale();
+u8 ClampToByte(int value);
+void DrawColorEdit(const char* label, GXColor& color);
 }  // namespace dusk
 
 void DuskDebugPad();

@@ -57,6 +57,24 @@ ImGuiWindow* FindDragScrollWindow(ImGuiWindow* window) {
 
 namespace dusk {
     float ImGuiScale() { return 1.0f; }
+    u8 ClampToByte(int value) {
+        return static_cast<u8>(std::clamp(value, 0, 255));
+    }
+
+    void DrawColorEdit(const char* label, GXColor& color) {
+        float colorValue[4] = {
+            color.r / 255.0f,
+            color.g / 255.0f,
+            color.b / 255.0f,
+            color.a / 255.0f,
+        };
+        if (ImGui::ColorEdit4(label, colorValue, ImGuiColorEditFlags_Uint8)) {
+            color.r = ClampToByte(static_cast<int>(colorValue[0] * 255.0f + 0.5f));
+            color.g = ClampToByte(static_cast<int>(colorValue[1] * 255.0f + 0.5f));
+            color.b = ClampToByte(static_cast<int>(colorValue[2] * 255.0f + 0.5f));
+            color.a = ClampToByte(static_cast<int>(colorValue[3] * 255.0f + 0.5f));
+        }
+    }
 
     void ImGuiStringViewText(std::string_view text) {
         // begin()/end() do not work on MSVC
@@ -322,6 +340,7 @@ namespace dusk {
             m_menuGame.draw();
             m_menuEnhancements.draw();
             m_menuTools.draw();
+            m_catDeluxe.draw();
 
             const auto fpsLabel =
                 fmt::format(FMT_STRING("FPS: {:.2f}\n"), ImGui::GetIO().Framerate);
@@ -364,6 +383,7 @@ namespace dusk {
             m_menuTools.ShowPlayerInfo();
             m_menuTools.ShowAudioDebug();
             m_menuTools.ShowSaveEditor();
+            m_catDeluxe.ShowMetersColor();
         }
         m_menuTools.ShowStateShare();
         DuskDebugPad(); // temporary, remove later
