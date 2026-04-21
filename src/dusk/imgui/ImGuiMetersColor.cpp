@@ -8,6 +8,7 @@
 #include "dusk/settings.h"
 
 namespace dusk {
+    MeterColorsOverride s_meterColorsOverride;
 void ResetToDefaultMeterColors() {
     s_meterColorsOverride.lanternCustomTop = {230, 170, 0, 255};
     s_meterColorsOverride.lanternCustomBottom = {255, 255, 140, 255};
