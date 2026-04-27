@@ -926,7 +926,7 @@ static cPhs_Step daE_BI_Create(fopAc_ac_c* actor) {
 
         static dCcD_SrcSph at_sph_src = {
             {
-                {0x0, {{AT_TYPE_CSTATUE_SWING, 0x1, 0xd}, {0x0, 0x0}, 0x0}}, // mObj
+                {0x0, {{AT_TYPE_CSTATUE_SWING, 0x8, 0xd}, {0x0, 0x0}, 0x0}}, // mObj
                 {dCcD_SE_METAL, 0x0, 0x0, 0x0, 0x0}, // mGObjAt
                 {dCcD_SE_NONE, 0x0, 0x0, 0x0, 0x2}, // mGObjTg
                 {0x0}, // mGObjCo
