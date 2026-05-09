@@ -25,6 +25,15 @@
     "*.pch": "cpp",
     "*.pch++": "cpp",
     ".clangd": "yaml",
+    "iterator": "cpp",
+    "ranges": "cpp",
+    "xutility": "cpp",
+    "vector": "cpp",
+    "xhash": "cpp",
+    "xstring": "cpp",
+    "chrono": "cpp",
+    "cstdint": "cpp",
+    "type_traits": "cpp"
   },
   // Disable C/C++ IntelliSense, use clangd instead
   //"C_Cpp.intelliSenseEngine": "disabled",

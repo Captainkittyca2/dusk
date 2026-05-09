@@ -18,6 +18,7 @@
 #include "f_op/f_op_overlap_mng.h"
 #include "dusk/memory.h"
 #include "dusk/settings.h"
+#include "dusk/logging.h"
 
 #if TARGET_PC
 #define SHOW_TV_SETTINGS_SCREEN (this->mShowTvSettingsScreen)
@@ -387,6 +388,17 @@ void dScnName_c::doPreLoadSetup() {
 void dScnName_c::changeGameScene() {
     if (!mDoRst::isReset() && !fopOvlpM_IsPeek()) {
         dComIfGs_gameStart();
+        if (dusk::saveInfoDurabilityPtr->SkywardID != 32) {
+            dusk::saveInfoDurabilityPtr->hylianShieldDurability = 255; dusk::saveInfoDurabilityPtr->woodShieldDurability = 255;
+            dusk::saveInfoDurabilityPtr->objectStored = 0; dusk::saveInfoDurabilityPtr->objectParams = 0;
+            dusk::saveInfoDurabilityPtr->objCarryParams = 0; dusk::saveInfoDurabilityPtr->objCarryItems = 0;
+            dusk::saveInfoDurabilityPtr->SkywardID = 32;
+        }
+
+        //if (dusk::saveInfoDurabilityPtr->objectStored != 0) {
+            //DuskLog.info("{}", dusk::saveInfoDurabilityPtr->objectStored);
+            //DuskLog.info("{}", dusk::saveInfoDurabilityPtr->objectParams);
+        //}
 
         #if DEBUG
         // Goto Map Select debug menu if opening File 1 with development mode on
@@ -407,6 +419,9 @@ void dScnName_c::changeGameScene() {
 
         if (dFs_c->isDataNew(dFs_c->getSelectNum())) {
             dComIfGp_setNextStage("F_SP108", 21, 1, 13);
+            dusk::saveInfoDurabilityPtr->hylianShieldDurability = 255; dusk::saveInfoDurabilityPtr->woodShieldDurability = 255;
+            dusk::saveInfoDurabilityPtr->objectStored = 0; dusk::saveInfoDurabilityPtr->objectParams = 0;
+            dusk::saveInfoDurabilityPtr->objCarryParams = 0; dusk::saveInfoDurabilityPtr->objCarryItems = 0;
         }
         
         dKy_clear_game_init();

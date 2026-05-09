@@ -388,6 +388,7 @@ namespace dusk {
             m_menuTools.ShowAudioDebug();
             m_menuTools.ShowSaveEditor();
             m_catDeluxe.ShowMetersColor();
+            m_catDeluxe.ShowUIPositionsWindow();
         }
         m_menuTools.ShowStateShare();
         DuskDebugPad(); // temporary, remove later

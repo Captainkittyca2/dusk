@@ -1353,6 +1353,7 @@ set(DUSK_FILES
         src/dusk/logging.cpp
         src/dusk/settings.cpp
         src/dusk/stubs.cpp
+        src/dusk/ShieldDurability.cpp
         #src/dusk/m_Do_ext_dusk.cpp
         src/dusk/imgui/ImGuiConfig.hpp
         src/dusk/imgui/ImGuiConsole.hpp
@@ -1369,6 +1370,8 @@ set(DUSK_FILES
         src/dusk/imgui/ImGuiCatDeluxe.hpp
         src/dusk/imgui/ImGuiMetersColor.cpp
         src/dusk/imgui/ImGuiMetersColor.hpp
+        src/dusk/imgui/ImGuiUIPosition.cpp
+        src/dusk/imgui/ImGuiUIPosition.hpp
         src/dusk/imgui/ImGuiPreLaunchWindow.cpp
         src/dusk/imgui/ImGuiPreLaunchWindow.hpp
         src/dusk/imgui/ImGuiFirstRunPreset.hpp

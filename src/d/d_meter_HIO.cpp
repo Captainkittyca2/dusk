@@ -1734,10 +1734,17 @@ dMeter_drawHIO_c::dMeter_drawHIO_c() {
     mButtonBVesselPosX = 0.0f;
     mButtonBVesselPosY = 0.0f;
 
-    mMidnaIconScale = 1.1f;
-    mMidnaIconAlpha = 1.0f;
-    mMidnaIconPosX = 0.0f;
-    mMidnaIconPosY = 0.0f;
+    //if (!dusk::getSettings().game.enableZButtonItems) {
+        mMidnaIconScale = 1.1f;
+        mMidnaIconAlpha = 1.0f;
+        mMidnaIconPosX = 0.0f;
+        mMidnaIconPosY = 0.0f;
+    //} else {
+        /*mMidnaIconScale = 0.8f;
+        mMidnaIconAlpha = 1.0f;
+        mMidnaIconPosX = -160.0f;
+        mMidnaIconPosY = 25.0f;*/
+    //}
 
     field_0x134 = 1.1f;
     field_0x138 = 1.0f;
@@ -1866,10 +1873,19 @@ dMeter_drawHIO_c::dMeter_drawHIO_c() {
     field_0x294 = 4.0f;
     field_0x298[1] = 1.0f;
 
-    mButtonZItemBaseScale = 1.0f;
-    mButtonZItemBasePosX = 0.0f;
-    mButtonZItemBasePosY = 0.0f;
-    mButtonZItemBaseAlpha = 0.5f;
+    mButtonZItemBaseScale[0] = 1.5f;
+    mButtonZItemBasePosX[0] = 16.0f;
+    mButtonZItemBasePosY[0] = -12.0f;
+
+    /*if (dusk::getSettings().game.enableZButtonItems) {
+        mButtonZItemBaseAlpha[0] = 0.5f;
+    } else {*/
+        mButtonZItemBaseAlpha[0] = 0.0f;
+    //}
+    mButtonZItemBaseScale[1] = 1.0f;
+    mButtonZItemBasePosX[1] = 0.0f;
+    mButtonZItemBasePosY[1] = 0.0f;
+    mButtonZItemBaseAlpha[1] = 0.5f;
 
     mButtonBaseAlpha = 0.55f;
 

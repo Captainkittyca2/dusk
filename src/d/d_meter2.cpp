@@ -63,7 +63,7 @@ int dMeter2_c::_create() {
         mBombNum[i] = dComIfGs_getBombNum(i);
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + 1; i++) {
         mItemMaxNum[i] = dComIfGs_getSelectItemIndex(i);
     }
 
@@ -148,19 +148,22 @@ int dMeter2_c::_create() {
     mRSetFlag = dComIfGp_isRSetFlag(2);
     mXSetFlag = dComIfGp_isXSetFlag(2);
     mYSetFlag = dComIfGp_isYSetFlag(2);
+    if (dusk::getSettings().game.enableZButtonItems) mZSetFlag = dComIfGp_isZSetFlag(2);
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         dComIfGp_setSelectItem(i);
     }
 
     mItemStatus[X_ITEM] = dComIfGp_getSelectItem(0);
     mItemStatus[Y_ITEM] = dComIfGp_getSelectItem(1);
+    mItemStatus[Z_ITEM] = dComIfGp_getSelectItem(2);
     mItemStatus[X_STATUS] = dComIfGp_getXStatus();
     mItemStatus[Y_STATUS] = dComIfGp_getYStatus();
+    mItemStatus[Z_STATUS] = dComIfGp_getZStatus();
     field_0x188 = 0.0f;
     field_0x18c = 0.0f;
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         field_0x1d6[i] = dMeter2Info_isDirectUseItem(i);
         field_0x1d8[i] = dComIfGp_getSelectItemNum(i);
     }
@@ -193,7 +196,7 @@ int dMeter2_c::_create() {
     field_0x130 = mpMeterDraw->getNowLightDropRateCalc();
     mpHeap->getTotalFreeSize();
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (field_0x128 == 0) {
             if (mItemStatus[i * 2] == dItemNo_BOMB_BAG_LV1_e || mItemStatus[i * 2] == dItemNo_NORMAL_BOMB_e ||
                 mItemStatus[i * 2] == dItemNo_WATER_BOMB_e || mItemStatus[i * 2] == dItemNo_POKE_BOMB_e)
@@ -647,16 +650,16 @@ void dMeter2_c::moveLife() {
         dMeter2Info_offLifeGaugeSE();
     }
 
-    f32 life_gauge_x = g_drawHIO.mLifeGaugePosX;
-    f32 life_gauge_y = g_drawHIO.mLifeGaugePosY;
+    f32 life_gauge_x = g_drawHIO.mLifeGaugePosX + dusk::getSettings().game.xHeartPos;
+    f32 life_gauge_y = g_drawHIO.mLifeGaugePosY + dusk::getSettings().game.yHeartPos;
 
-    if (mLifeGaugePosX != g_drawHIO.mLifeGaugePosX) {
-        mLifeGaugePosX = g_drawHIO.mLifeGaugePosX;
+    if (mLifeGaugePosX != g_drawHIO.mLifeGaugePosX + dusk::getSettings().game.xHeartPos) {
+        mLifeGaugePosX = g_drawHIO.mLifeGaugePosX + dusk::getSettings().game.xHeartPos;
         draw_life = true;
     }
 
-    if (mLifeGaugePosY != g_drawHIO.mLifeGaugePosY) {
-        mLifeGaugePosY = g_drawHIO.mLifeGaugePosY;
+    if (mLifeGaugePosY != g_drawHIO.mLifeGaugePosY + dusk::getSettings().game.yHeartPos) {
+        mLifeGaugePosY = g_drawHIO.mLifeGaugePosY + dusk::getSettings().game.yHeartPos;
         draw_life = true;
     }
 
@@ -773,8 +776,8 @@ void dMeter2_c::moveKantera() {
         }
     }
 
-    f32 x_pos = g_drawHIO.mLanternMeterPosX;
-    f32 y_pos = g_drawHIO.mLanternMeterPosY;
+    f32 x_pos = g_drawHIO.mLanternMeterPosX + dusk::getSettings().game.xLanternPos;
+    f32 y_pos = g_drawHIO.mLanternMeterPosY + dusk::getSettings().game.yLanternPos;
 
     if (field_0x246 != mMaxLife) {
         field_0x246 = mMaxLife;
@@ -894,8 +897,8 @@ void dMeter2_c::moveOxygen() {
         }
     }
 
-    f32 x_pos = g_drawHIO.mOxygenMeterPosX;
-    f32 y_pos = g_drawHIO.mOxygenMeterPosY;
+    f32 x_pos = g_drawHIO.mOxygenMeterPosX + dusk::getSettings().game.xOxygenPos;
+    f32 y_pos = g_drawHIO.mOxygenMeterPosY + dusk::getSettings().game.yOxygenPos;
 
     if (field_0x248 != mMaxLife) {
         field_0x248 = mMaxLife;
@@ -1113,13 +1116,13 @@ void dMeter2_c::moveRupee() {
         draw_rupee = true;
     }
 
-    if (mRupeePosX != g_drawHIO.mRupeePosX) {
-        mRupeePosX = g_drawHIO.mRupeePosX;
+    if (mRupeePosX != g_drawHIO.mRupeePosX + dusk::getSettings().game.xRupeePos) {
+        mRupeePosX = g_drawHIO.mRupeePosX + dusk::getSettings().game.xRupeePos;
         draw_rupee = true;
     }
 
-    if (mRupeePosY != g_drawHIO.mRupeePosY) {
-        mRupeePosY = g_drawHIO.mRupeePosY;
+    if (mRupeePosY != g_drawHIO.mRupeePosY + dusk::getSettings().game.yRupeePos) {
+        mRupeePosY = g_drawHIO.mRupeePosY + dusk::getSettings().game.yRupeePos;
         draw_rupee = true;
     }
 
@@ -1143,13 +1146,13 @@ void dMeter2_c::moveRupee() {
         draw_rupee = true;
     }
 
-    if (mRupeeCountPosX != g_drawHIO.mRupeeCountPosX) {
-        mRupeeCountPosX = g_drawHIO.mRupeeCountPosX;
+    if (mRupeeCountPosX != g_drawHIO.mRupeeCountPosX + dusk::getSettings().game.xRupeeTextPos) {
+        mRupeeCountPosX = g_drawHIO.mRupeeCountPosX + dusk::getSettings().game.xRupeeTextPos;
         draw_rupee = true;
     }
 
-    if (mRupeeCountPosY != g_drawHIO.mRupeeCountPosY) {
-        mRupeeCountPosY = g_drawHIO.mRupeeCountPosY;
+    if (mRupeeCountPosY != g_drawHIO.mRupeeCountPosY + dusk::getSettings().game.yRupeeTextPos) {
+        mRupeeCountPosY = g_drawHIO.mRupeeCountPosY + dusk::getSettings().game.yRupeeTextPos;
         draw_rupee = true;
     }
 
@@ -1299,13 +1302,13 @@ void dMeter2_c::moveButtonA() {
         }
     }
 
-    if (mButtonAPosX != g_drawHIO.mButtonAPosX) {
-        mButtonAPosX = g_drawHIO.mButtonAPosX;
+    if (mButtonAPosX != g_drawHIO.mButtonAPosX + dusk::getSettings().game.xBtnAPos) {
+        mButtonAPosX = g_drawHIO.mButtonAPosX + dusk::getSettings().game.xBtnAPos;
         draw_buttonA = true;
     }
 
-    if (mButtonAPosY != g_drawHIO.mButtonAPosY) {
-        mButtonAPosY = g_drawHIO.mButtonAPosY;
+    if (mButtonAPosY != g_drawHIO.mButtonAPosY + dusk::getSettings().game.yBtnAPos) {
+        mButtonAPosY = g_drawHIO.mButtonAPosY + dusk::getSettings().game.yBtnAPos;
         draw_buttonA = true;
     }
 
@@ -1314,13 +1317,13 @@ void dMeter2_c::moveButtonA() {
         draw_buttonA = true;
     }
 
-    if (mButtonATextPosX != g_drawHIO.mButtonATextPosX) {
-        mButtonATextPosX = g_drawHIO.mButtonATextPosX;
+    if (mButtonATextPosX != g_drawHIO.mButtonATextPosX + dusk::getSettings().game.xTextAPos) {
+        mButtonATextPosX = g_drawHIO.mButtonATextPosX + dusk::getSettings().game.xTextAPos;
         draw_buttonA = true;
     }
 
-    if (mButtonATextPosY != g_drawHIO.mButtonATextPosY) {
-        mButtonATextPosY = g_drawHIO.mButtonATextPosY;
+    if (mButtonATextPosY != g_drawHIO.mButtonATextPosY + dusk::getSettings().game.yTextAPos) {
+        mButtonATextPosY = g_drawHIO.mButtonATextPosY + dusk::getSettings().game.yTextAPos;
         draw_buttonA = true;
     }
 
@@ -1344,8 +1347,8 @@ void dMeter2_c::moveButtonA() {
         }
         var_f31 = 1.0f;
     } else {
-        pos_x[0] = g_drawHIO.mButtonAPosX;
-        pos_y[0] = g_drawHIO.mButtonAPosY;
+        pos_x[0] = g_drawHIO.mButtonAPosX + dusk::getSettings().game.xBtnAPos;
+        pos_y[0] = g_drawHIO.mButtonAPosY + dusk::getSettings().game.yBtnAPos;
         pos_x[1] = 0.0f;
         pos_y[1] = 0.0f;
         var_f31 = 1.0f;
@@ -1475,13 +1478,13 @@ void dMeter2_c::moveButtonB() {
         }
     }
 
-    if (mButtonBPosX != g_drawHIO.mButtonBPosX) {
-        mButtonBPosX = g_drawHIO.mButtonBPosX;
+    if (mButtonBPosX != g_drawHIO.mButtonBPosX + dusk::getSettings().game.xBtnBPos) {
+        mButtonBPosX = g_drawHIO.mButtonBPosX + dusk::getSettings().game.xBtnBPos;
         draw_buttonB = true;
     }
 
-    if (mButtonBPosY != g_drawHIO.mButtonBPosY) {
-        mButtonBPosY = g_drawHIO.mButtonBPosY;
+    if (mButtonBPosY != g_drawHIO.mButtonBPosY + dusk::getSettings().game.yBtnBPos) {
+        mButtonBPosY = g_drawHIO.mButtonBPosY + dusk::getSettings().game.yBtnBPos;
         draw_buttonB = true;
     }
 
@@ -1495,13 +1498,13 @@ void dMeter2_c::moveButtonB() {
             draw_buttonB = true;
         }
 
-        if (mItemBBasePosX[i] != g_drawHIO.mItemBBasePosX[i]) {
-            mItemBBasePosX[i] = g_drawHIO.mItemBBasePosX[i];
+        if (mItemBBasePosX[i] != g_drawHIO.mItemBBasePosX[i] + dusk::getSettings().game.xItemBPos) {
+            mItemBBasePosX[i] = g_drawHIO.mItemBBasePosX[i] + dusk::getSettings().game.xItemBPos;
             draw_buttonB = true;
         }
 
-        if (mItemBBasePosY[i] != g_drawHIO.mItemBBasePosY[i]) {
-            mItemBBasePosY[i] = g_drawHIO.mItemBBasePosY[i];
+        if (mItemBBasePosY[i] != g_drawHIO.mItemBBasePosY[i] + dusk::getSettings().game.yItemBPos) {
+            mItemBBasePosY[i] = g_drawHIO.mItemBBasePosY[i] + dusk::getSettings().game.yItemBPos;
             draw_buttonB = true;
         }
     }
@@ -1511,13 +1514,13 @@ void dMeter2_c::moveButtonB() {
         draw_buttonB = true;
     }
 
-    if (mButtonBFontPosX != g_drawHIO.mButtonBFontPosX) {
-        mButtonBFontPosX = g_drawHIO.mButtonBFontPosX;
+    if (mButtonBFontPosX != g_drawHIO.mButtonBFontPosX + dusk::getSettings().game.xTextBPos) {
+        mButtonBFontPosX = g_drawHIO.mButtonBFontPosX + dusk::getSettings().game.xTextBPos;
         draw_buttonB = true;
     }
 
-    if (mButtonBFontPosY != g_drawHIO.mButtonBFontPosY) {
-        mButtonBFontPosY = g_drawHIO.mButtonBFontPosY;
+    if (mButtonBFontPosY != g_drawHIO.mButtonBFontPosY + dusk::getSettings().game.yTextBPos) {
+        mButtonBFontPosY = g_drawHIO.mButtonBFontPosY + dusk::getSettings().game.yTextBPos;
         draw_buttonB = true;
     }
 
@@ -1557,19 +1560,19 @@ void dMeter2_c::moveButtonB() {
     }
 
     for (int i = 0; i < 2; i++) {
-        if (field_0x148[i] != pos_x[i]) {
-            cLib_addCalc2(&field_0x148[i], pos_x[i], 1.0f, 10.0f);
+        if (field_0x148[i] != pos_x[i]/* + dusk::getSettings().game.xBtnBPos*/) {
+            cLib_addCalc2(&field_0x148[i], pos_x[i]/* + dusk::getSettings().game.xBtnBPos*/, 1.0f, 10.0f);
             draw_buttonB = true;
-            if ((f32)fabs(field_0x148[i] - pos_x[i]) < 0.1f) {
-                field_0x148[i] = pos_x[i];
+            if ((f32)fabs(field_0x148[i] - pos_x[i] /*+ dusk::getSettings().game.xBtnBPos*/) < 0.1f) {
+                field_0x148[i] = pos_x[i]/* + dusk::getSettings().game.xBtnBPos*/;
             }
         }
 
-        if (field_0x150[i] != pos_y[i]) {
-            cLib_addCalc2(&field_0x150[i], pos_y[i], 1.0f, 10.0f);
+        if (field_0x150[i] != pos_y[i]/* + dusk::getSettings().game.yBtnBPos*/) {
+            cLib_addCalc2(&field_0x150[i], pos_y[i]/* + dusk::getSettings().game.yBtnBPos*/, 1.0f, 10.0f);
             draw_buttonB = true;
-            if ((f32)fabs(field_0x150[i] - pos_y[i]) < 0.1f) {
-                field_0x150[i] = pos_y[i];
+            if ((f32)fabs(field_0x150[i] - pos_y[i]/* + dusk::getSettings().game.yBtnBPos*/) < 0.1f) {
+                field_0x150[i] = pos_y[i]/* + dusk::getSettings().game.yBtnBPos*/;
             }
         }
     }
@@ -1647,65 +1650,68 @@ void dMeter2_c::moveButtonR() {
 void dMeter2_c::moveButtonZ() {
     bool draw_buttonZ = false;
 
-    if (field_0x324 != g_drawHIO.mButtonZScale) {
-        field_0x324 = g_drawHIO.mButtonZScale;
-        draw_buttonZ = true;
+    if (!dusk::getSettings().game.enableZButtonItems) {
+        if (field_0x324 != g_drawHIO.mButtonZScale) {
+            field_0x324 = g_drawHIO.mButtonZScale;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x328 != g_drawHIO.mButtonZPosX + dusk::getSettings().game.xBtnZPos) {
+            field_0x328 = g_drawHIO.mButtonZPosX + dusk::getSettings().game.xBtnZPos;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x32c != g_drawHIO.mButtonZPosY + dusk::getSettings().game.yBtnZPos) {
+            field_0x32c = g_drawHIO.mButtonZPosY + dusk::getSettings().game.yBtnZPos;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x384 != g_drawHIO.mButtonZItemScale) {
+            field_0x384 = g_drawHIO.mButtonZItemScale;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x388 != g_drawHIO.mButtonZItemPosX + dusk::getSettings().game.xItemZPos) {
+            field_0x388 = g_drawHIO.mButtonZItemPosX + dusk::getSettings().game.xItemZPos;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x38c != g_drawHIO.mButtonZItemPosY + dusk::getSettings().game.yItemZPos) {
+            field_0x38c = g_drawHIO.mButtonZItemPosY + dusk::getSettings().game.yItemZPos;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x3e4 != g_drawHIO.mButtonZItemBaseScale[1]) {
+            field_0x3e4 = g_drawHIO.mButtonZItemBaseScale[1];
+            draw_buttonZ = true;
+        }
+
+        if (field_0x3e8 != g_drawHIO.mButtonZItemBasePosX[1]) {
+            field_0x3e8 = g_drawHIO.mButtonZItemBasePosX[1];
+            draw_buttonZ = true;
+        }
+
+        if (field_0x3ec != g_drawHIO.mButtonZItemBasePosY[1]) {
+            field_0x3ec = g_drawHIO.mButtonZItemBasePosY[1];
+            draw_buttonZ = true;
+        }
+
+        if (field_0x330 != g_drawHIO.mButtonZFontScale) {
+            field_0x330 = g_drawHIO.mButtonZFontScale;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x334 != g_drawHIO.mButtonZFontPosX + dusk::getSettings().game.xTextZPos) {
+            field_0x334 = g_drawHIO.mButtonZFontPosX + dusk::getSettings().game.xTextZPos;
+            draw_buttonZ = true;
+        }
+
+        if (field_0x338 != g_drawHIO.mButtonZFontPosY + dusk::getSettings().game.yTextZPos) {
+            field_0x338 = g_drawHIO.mButtonZFontPosY + dusk::getSettings().game.yTextZPos;
+            draw_buttonZ = true;
+        }
     }
 
-    if (field_0x328 != g_drawHIO.mButtonZPosX) {
-        field_0x328 = g_drawHIO.mButtonZPosX;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x32c != g_drawHIO.mButtonZPosY) {
-        field_0x32c = g_drawHIO.mButtonZPosY;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x384 != g_drawHIO.mButtonZItemScale) {
-        field_0x384 = g_drawHIO.mButtonZItemScale;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x388 != g_drawHIO.mButtonZItemPosX) {
-        field_0x388 = g_drawHIO.mButtonZItemPosX;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x38c != g_drawHIO.mButtonZItemPosY) {
-        field_0x38c = g_drawHIO.mButtonZItemPosY;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x3e4 != g_drawHIO.mButtonZItemBaseScale) {
-        field_0x3e4 = g_drawHIO.mButtonZItemBaseScale;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x3e8 != g_drawHIO.mButtonZItemBasePosX) {
-        field_0x3e8 = g_drawHIO.mButtonZItemBasePosX;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x3ec != g_drawHIO.mButtonZItemBasePosY) {
-        field_0x3ec = g_drawHIO.mButtonZItemBasePosY;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x330 != g_drawHIO.mButtonZFontScale) {
-        field_0x330 = g_drawHIO.mButtonZFontScale;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x334 != g_drawHIO.mButtonZFontPosX) {
-        field_0x334 = g_drawHIO.mButtonZFontPosX;
-        draw_buttonZ = true;
-    }
-
-    if (field_0x338 != g_drawHIO.mButtonZFontPosY) {
-        field_0x338 = g_drawHIO.mButtonZFontPosY;
-        draw_buttonZ = true;
-    }
 
     if (dComIfGp_getZStatusForce() != 0) {
         dComIfGp_setZStatus(dComIfGp_getZStatusForce(), dComIfGp_getZSetFlagForce());
@@ -1803,10 +1809,10 @@ void dMeter2_c::moveButtonS() {
 }
 
 void dMeter2_c::moveButtonXY() {
-    bool sp8[2];
-    bool spC[2];
+    bool sp8[3];
+    bool spC[3];
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         sp8[i] = 0;
         spC[i] = 0;
     }
@@ -1816,13 +1822,13 @@ void dMeter2_c::moveButtonXY() {
         sp8[0] = 1;
     }
 
-    if (field_0x340 != g_drawHIO.mButtonXPosX) {
-        field_0x340 = g_drawHIO.mButtonXPosX;
+    if (field_0x340 != g_drawHIO.mButtonXPosX + dusk::getSettings().game.xBtnXPos) {
+        field_0x340 = g_drawHIO.mButtonXPosX + dusk::getSettings().game.xBtnXPos;
         sp8[0] = 1;
     }
 
-    if (field_0x344 != g_drawHIO.mButtonXPosY) {
-        field_0x344 = g_drawHIO.mButtonXPosY;
+    if (field_0x344 != g_drawHIO.mButtonXPosY + dusk::getSettings().game.yBtnXPos) {
+        field_0x344 = g_drawHIO.mButtonXPosY + dusk::getSettings().game.yBtnXPos;
         sp8[0] = 1;
     }
 
@@ -1831,14 +1837,31 @@ void dMeter2_c::moveButtonXY() {
         sp8[1] = 1;
     }
 
-    if (field_0x34c != g_drawHIO.mButtonYPosX) {
-        field_0x34c = g_drawHIO.mButtonYPosX;
+    if (field_0x34c != g_drawHIO.mButtonYPosX + dusk::getSettings().game.xBtnYPos) {
+        field_0x34c = g_drawHIO.mButtonYPosX + dusk::getSettings().game.xBtnYPos;
         sp8[1] = 1;
     }
 
-    if (field_0x350 != g_drawHIO.mButtonYPosY) {
-        field_0x350 = g_drawHIO.mButtonYPosY;
+    if (field_0x350 != g_drawHIO.mButtonYPosY + dusk::getSettings().game.yBtnYPos) {
+        field_0x350 = g_drawHIO.mButtonYPosY + dusk::getSettings().game.yBtnYPos;
         sp8[1] = 1;
+    }
+
+    if (dusk::getSettings().game.enableZButtonItems) {
+        if (field_0x354 != g_drawHIO.mButtonZScale) {
+            field_0x354 = g_drawHIO.mButtonZScale;
+            sp8[2] = 1;
+        }
+
+        if (field_0x358 != g_drawHIO.mButtonZPosX + dusk::getSettings().game.xBtnZPos) {
+            field_0x358 = g_drawHIO.mButtonZPosX + dusk::getSettings().game.xBtnZPos;
+            sp8[2] = 1;
+        }
+
+        if (field_0x35c != g_drawHIO.mButtonZPosY + dusk::getSettings().game.yBtnZPos) {
+            field_0x35c = g_drawHIO.mButtonZPosY + dusk::getSettings().game.yBtnZPos;
+            sp8[2] = 1;
+        }
     }
 
     if (field_0x360 != g_drawHIO.mButtonXItemScale) {
@@ -1846,13 +1869,13 @@ void dMeter2_c::moveButtonXY() {
         sp8[0] = 1;
     }
 
-    if (field_0x364 != g_drawHIO.mButtonXItemPosX) {
-        field_0x364 = g_drawHIO.mButtonXItemPosX;
+    if (field_0x364 != g_drawHIO.mButtonXItemPosX + dusk::getSettings().game.xItemXPos) {
+        field_0x364 = g_drawHIO.mButtonXItemPosX + dusk::getSettings().game.xItemXPos;
         sp8[0] = 1;
     }
 
-    if (field_0x368 != g_drawHIO.mButtonXItemPosY) {
-        field_0x368 = g_drawHIO.mButtonXItemPosY;
+    if (field_0x368 != g_drawHIO.mButtonXItemPosY + dusk::getSettings().game.yItemXPos) {
+        field_0x368 = g_drawHIO.mButtonXItemPosY + dusk::getSettings().game.yItemXPos;
         sp8[0] = 1;
     }
 
@@ -1861,14 +1884,31 @@ void dMeter2_c::moveButtonXY() {
         sp8[1] = 1;
     }
 
-    if (field_0x370 != g_drawHIO.mButtonYItemPosX) {
-        field_0x370 = g_drawHIO.mButtonYItemPosX;
+    if (field_0x370 != g_drawHIO.mButtonYItemPosX + dusk::getSettings().game.xItemYPos) {
+        field_0x370 = g_drawHIO.mButtonYItemPosX + dusk::getSettings().game.xItemYPos;
         sp8[1] = 1;
     }
 
-    if (field_0x374 != g_drawHIO.mButtonYItemPosY) {
-        field_0x374 = g_drawHIO.mButtonYItemPosY;
+    if (field_0x374 != g_drawHIO.mButtonYItemPosY + dusk::getSettings().game.yItemYPos) {
+        field_0x374 = g_drawHIO.mButtonYItemPosY + dusk::getSettings().game.yItemYPos;
         sp8[1] = 1;
+    }
+
+    if (dusk::getSettings().game.enableZButtonItems) {
+        if (field_0x378 != g_drawHIO.mButtonZItemScale) {
+            field_0x378 = g_drawHIO.mButtonZItemScale;
+            sp8[2] = 1;
+        }
+
+        if (field_0x37c != g_drawHIO.mButtonZItemPosX + dusk::getSettings().game.xItemZPos) {
+            field_0x37c = g_drawHIO.mButtonZItemPosX + dusk::getSettings().game.xItemZPos;
+            sp8[2] = 1;
+        }
+
+        if (field_0x380 != g_drawHIO.mButtonZItemPosY + dusk::getSettings().game.yItemZPos) {
+            field_0x380 = g_drawHIO.mButtonZItemPosY + dusk::getSettings().game.yItemZPos;
+            sp8[2] = 1;
+        }
     }
 
     for (int i = 0; i < 2; i++) {
@@ -1901,12 +1941,29 @@ void dMeter2_c::moveButtonXY() {
             field_0x3c4[i] = g_drawHIO.mButtonYItemBasePosY[i];
             sp8[1] = 1;
         }
+
+        if (dusk::getSettings().game.enableZButtonItems) {
+            if (field_0x3cc[i] != g_drawHIO.mButtonZItemBaseScale[i]) {
+                field_0x3cc[i] = g_drawHIO.mButtonZItemBaseScale[i];
+                sp8[2] = 1;
+            }
+
+            if (field_0x3d4[i] != g_drawHIO.mButtonZItemBasePosX[i]) {
+                field_0x3d4[i] = g_drawHIO.mButtonZItemBasePosX[i];
+                sp8[2] = 1;
+            }
+
+            if (field_0x3dc[i] != g_drawHIO.mButtonZItemBasePosY[i]) {
+                field_0x3dc[i] = g_drawHIO.mButtonZItemBasePosY[i];
+                sp8[2] = 1;
+            }
+        }
     }
 
     if (g_drawHIO.mItemScaleAdjustON && field_0x4bd != g_drawHIO.mItemScalePercent) {
         field_0x4bd = g_drawHIO.mItemScalePercent;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             sp8[i] = 1;
         }
     }
@@ -1914,23 +1971,23 @@ void dMeter2_c::moveButtonXY() {
     if (field_0x3f0 != g_drawHIO.mButtonXYTextScale) {
         field_0x3f0 = g_drawHIO.mButtonXYTextScale;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             sp8[i] = 1;
         }
     }
 
-    if (field_0x3f4 != g_drawHIO.mButtonXYTextPosX) {
-        field_0x3f4 = g_drawHIO.mButtonXYTextPosX;
+    if (field_0x3f4 != g_drawHIO.mButtonXYTextPosX + dusk::getSettings().game.xTextXPos) {
+        field_0x3f4 = g_drawHIO.mButtonXYTextPosX + dusk::getSettings().game.xTextXPos;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             sp8[i] = 1;
         }
     }
 
-    if (field_0x3f8 != g_drawHIO.mButtonXYTextPosY) {
-        field_0x3f8 = g_drawHIO.mButtonXYTextPosY;
+    if (field_0x3f8 != g_drawHIO.mButtonXYTextPosY + dusk::getSettings().game.yTextXPos) {
+        field_0x3f8 = g_drawHIO.mButtonXYTextPosY + dusk::getSettings().game.yTextXPos;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             sp8[i] = 1;
         }
     }
@@ -1951,7 +2008,7 @@ void dMeter2_c::moveButtonXY() {
         }
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (field_0x128 != 0) {
             if (field_0x128 != field_0x12c) {
                 spC[i] = 1;
@@ -1999,6 +2056,28 @@ void dMeter2_c::moveButtonXY() {
 
                 if ((&mXSetFlag)[i] != dComIfGp_isYSetFlag(2)) {
                     (&mXSetFlag)[i] = dComIfGp_isYSetFlag(2);
+                    spC[i] = 1;
+                    sp8[i] = 1;
+                }
+            } else if (i == 2) {
+                if (dComIfGp_getZStatusForce() != 0) {
+                    dComIfGp_setZStatus(dComIfGp_getZStatusForce(), dComIfGp_getZSetFlagForce());
+                    dComIfGp_setZStatusForce(0, 0);
+                }
+
+                if (mItemStatus[i * 2 + 1] != dComIfGp_getZStatus()) {
+                    mItemStatus[i * 2 + 1] = dComIfGp_getZStatus();
+
+                    if (mItemStatus[i * 2 + 1] == 0x2D || mItemStatus[i * 2 + 1] == 0x2E) {
+                        dComIfGp_setZStatus(mItemStatus[i * 2 + 1], 1);
+                    }
+
+                    spC[i] = 1;
+                    sp8[i] = 1;
+                }
+
+                if ((&mZSetFlag)[i] != dComIfGp_isZSetFlag(2)) {
+                    (&mZSetFlag)[i] = dComIfGp_isZSetFlag(2);
                     spC[i] = 1;
                     sp8[i] = 1;
                 }
@@ -2104,23 +2183,23 @@ void dMeter2_c::moveButtonCross() {
     draw_cross = false;
     var_f31 = 0.0f;
 
-    if (mButtonCrossOFFPosX != g_drawHIO.mButtonCrossOFFPosX) {
-        mButtonCrossOFFPosX = g_drawHIO.mButtonCrossOFFPosX;
+    if (mButtonCrossOFFPosX != g_drawHIO.mButtonCrossOFFPosX + dusk::getSettings().game.xDPadPos) {
+        mButtonCrossOFFPosX = g_drawHIO.mButtonCrossOFFPosX + dusk::getSettings().game.xDPadPos;
         draw_cross = true;
     }
 
-    if (mButtonCrossOFFPosY != g_drawHIO.mButtonCrossOFFPosY) {
-        mButtonCrossOFFPosY = g_drawHIO.mButtonCrossOFFPosY;
+    if (mButtonCrossOFFPosY != g_drawHIO.mButtonCrossOFFPosY + dusk::getSettings().game.yDPadPos) {
+        mButtonCrossOFFPosY = g_drawHIO.mButtonCrossOFFPosY + dusk::getSettings().game.yDPadPos;
         draw_cross = true;
     }
 
-    if (mButtonCrossONPosX != g_drawHIO.mButtonCrossONPosX) {
-        mButtonCrossONPosX = g_drawHIO.mButtonCrossONPosX;
+    if (mButtonCrossONPosX != g_drawHIO.mButtonCrossONPosX + dusk::getSettings().game.xDPadPos2) {
+        mButtonCrossONPosX = g_drawHIO.mButtonCrossONPosX + dusk::getSettings().game.xDPadPos2;
         draw_cross = true;
     }
 
-    if (mButtonCrossONPosY != g_drawHIO.mButtonCrossONPosY) {
-        mButtonCrossONPosY = g_drawHIO.mButtonCrossONPosY;
+    if (mButtonCrossONPosY != g_drawHIO.mButtonCrossONPosY + dusk::getSettings().game.yDPadPos2) {
+        mButtonCrossONPosY = g_drawHIO.mButtonCrossONPosY + dusk::getSettings().game.yDPadPos2;
         draw_cross = true;
     }
 
@@ -2146,7 +2225,7 @@ void dMeter2_c::moveButtonCross() {
                 field_0x1b4 = g_drawHIO.mButtonCrossMoveFrame;
             }
 
-            var_f31 = mButtonCrossONPosY + temp_f1;
+            var_f31 = mButtonCrossONPosY + temp_f1 + dusk::getSettings().game.yDPadPos2;
         } else {
             if (field_0x1b4 > 0) {
                 field_0x1b4--;
@@ -2155,12 +2234,12 @@ void dMeter2_c::moveButtonCross() {
                 field_0x1b4 = 0;
             }
 
-            var_f31 = mButtonCrossOFFPosY;
+            var_f31 = mButtonCrossOFFPosY + dusk::getSettings().game.yDPadPos;
         }
     }
 
-    temp_f30 = mButtonCrossOFFPosX + (((f32)field_0x1b4 / (f32)g_drawHIO.mButtonCrossMoveFrame) *
-                                     (mButtonCrossONPosX - mButtonCrossOFFPosX));
+    temp_f30 = mButtonCrossOFFPosX + dusk::getSettings().game.xDPadPos + (((f32)field_0x1b4 / (f32)g_drawHIO.mButtonCrossMoveFrame) *
+                                     (mButtonCrossONPosX - mButtonCrossOFFPosX + dusk::getSettings().game.xDPadPos));
     if (field_0x15c != var_f31) {
         cLib_addCalc2(&field_0x15c, var_f31, 0.5f, 50.0f);
         if ((f32)fabs(field_0x15c - var_f31) < 0.5f) {
@@ -2515,7 +2594,7 @@ void dMeter2_c::moveBombNum() {
 
                 if (var_r22 == 0) {
                     if (temp_r31 == dItemNo_BOMB_ARROW_e) {
-                        for (int j = 0; j < 2; j++) {
+                        for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                             if (i + SLOT_15 == dComIfGs_getSelectItemIndex(j) ||
                                 i + SLOT_15 == dComIfGs_getMixItemIndex(j))
                             {
@@ -2528,7 +2607,7 @@ void dMeter2_c::moveBombNum() {
                     dComIfGs_setItem(i + SLOT_15, dItemNo_BOMB_BAG_LV1_e);
                     dComIfGp_setItem(i + SLOT_15, dItemNo_BOMB_BAG_LV1_e);
 
-                    for (int j = 0; j < 2; j++) {
+                    for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                         if (i + SLOT_15 == dComIfGs_getSelectMixItemNoArrowIndex(j)) {
                             dComIfGp_setSelectItem(j);
                         }
@@ -2539,7 +2618,7 @@ void dMeter2_c::moveBombNum() {
                 mBombMax[i] = dComIfGs_getBombMax(temp_r28);
 
                 if (temp_r31 != dItemNo_BOMB_ARROW_e) {
-                    for (int j = 0; j < 2; j++) {
+                    for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                         if (i + SLOT_15 == dComIfGs_getSelectMixItemNoArrowIndex(j)) {
                             mpMeterDraw->setItemNum(j, dComIfGp_getSelectItemNum(j),
                                                     dComIfGp_getSelectItemMaxNum(j));
@@ -2562,7 +2641,7 @@ void dMeter2_c::moveBombNum() {
         }
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (mItemMaxNum[i] != dComIfGs_getSelectItemIndex(i)) {
             for (int j = 0; j < 3; j++) {
                 if (j + SLOT_15 == dComIfGs_getSelectItemIndex(i)) {
@@ -2580,7 +2659,7 @@ void dMeter2_c::moveBottleNum() {
     for (int i = 0; i < 4; i++) {
         if (dComIfGs_getItem((u8)(i + SLOT_11), true) == dItemNo_BEE_CHILD_e) {
             if (mBottleNum[i] != dComIfGs_getBottleNum(i)) {
-                for (int j = 0; j < 2; j++) {
+                for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                     if (i + SLOT_11 == dComIfGs_getSelectItemIndex(j)) {
                         mpMeterDraw->setItemNum(j, dComIfGp_getSelectItemNum(j),
                                                 dComIfGp_getSelectItemMaxNum(j));
@@ -2652,7 +2731,7 @@ void dMeter2_c::moveArrowNum() {
 
         i = 0;
         var_r28 = 0;
-        for (; i < 2; i++, var_r28 += 2) {
+        for (; i < 2 + dusk::getSettings().game.enableZButtonItems; i++, var_r28 += 2) {
             if (mItemStatus[var_r28] == dItemNo_BOW_e || mItemStatus[var_r28] == dItemNo_LIGHT_ARROW_e ||
                 mItemStatus[var_r28] == dItemNo_ARROW_LV1_e || mItemStatus[var_r28] == dItemNo_ARROW_LV2_e ||
                 mItemStatus[var_r28] == dItemNo_ARROW_LV3_e || mItemStatus[var_r28] == dItemNo_HAWK_ARROW_e)
@@ -2733,7 +2812,7 @@ void dMeter2_c::movePachinkoNum() {
         mPachinkoNum--;
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (mItemStatus[i * 2] == dItemNo_PACHINKO_e) {
             mpMeterDraw->setItemNum(i, mPachinkoNum, dComIfGs_getPachinkoMax());
         }
@@ -2911,7 +2990,7 @@ void dMeter2_c::alphaAnimeButton() {
         mpMeterDraw->setButtonIconBAlpha(mAStatus, mStatus, field_0x128 == 0);
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         mpMeterDraw->setButtonIconAlpha(i, mItemStatus[i * 2], mStatus,
                                         field_0x128 == 0 ? true : false);
 
@@ -3034,7 +3113,7 @@ u8 dMeter2_c::isKeyVisible() {
 }
 
 int dMeter2_c::isArrowEquip() {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (mItemStatus[i * 2] == dItemNo_BOW_e || mItemStatus[i * 2] == dItemNo_LIGHT_ARROW_e ||
             mItemStatus[i * 2] == dItemNo_ARROW_LV1_e || mItemStatus[i * 2] == dItemNo_ARROW_LV2_e ||
             mItemStatus[i * 2] == dItemNo_ARROW_LV3_e || mItemStatus[i * 2] == dItemNo_HAWK_ARROW_e ||
@@ -3047,7 +3126,7 @@ int dMeter2_c::isArrowEquip() {
 }
 
 int dMeter2_c::isPachinkoEquip() {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (mItemStatus[i * 2] == dItemNo_PACHINKO_e) {
             return i + 1;
         }

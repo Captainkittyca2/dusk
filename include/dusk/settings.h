@@ -5,6 +5,8 @@
 
 namespace dusk {
 
+bool shieldDurability(u8 shieldType, bool strongAttack);
+
 struct MeterColorsOverride {
     GXColor lanternCustomTop = {230, 170, 0, 255};
     GXColor lanternCustomBottom = {255, 255, 140, 255};
@@ -15,6 +17,23 @@ struct MeterColorsOverride {
 };
 
 extern MeterColorsOverride s_meterColorsOverride;
+
+struct saveInfoShieldDurability
+{
+    /* 0x00 */ uint8_t zoraArmorAcquired;
+    uint8_t unk[63];
+    /* 0x40 */ uint8_t woodShieldDurability;
+    /* 0x41 */ uint8_t hylianShieldDurability;
+    /* 0x42 */ uint16_t objectStored;
+    /* 0x44 */ uint32_t objectParams;
+    /* 0x48 */ uint16_t objCarryParams;
+    /* 0x4A */ uint16_t objCarryItems;
+    /* 0x4C */ uint8_t padding1;
+    /* 0x4D */ uint16_t padding2;
+    /* 0x4F */ uint8_t SkywardID;
+};
+
+extern saveInfoShieldDurability* saveInfoDurabilityPtr;
 
 using namespace config;
 
@@ -58,6 +77,8 @@ struct UserSettings {
 
     struct {
         // QoL
+        ConfigVar<bool> enableZButtonItems;
+        ConfigVar<bool> enableObjectStoring;
         ConfigVar<bool> enableArmorsQuickToggle;
         ConfigVar<bool> enableQuickTransform;
         ConfigVar<bool> hideTvSettingsScreen;
@@ -77,6 +98,67 @@ struct UserSettings {
         ConfigVar<bool> sunsSong;
 
         // Preferences
+        ConfigVar<float> xLanternPos;
+        ConfigVar<float> yLanternPos;
+        ConfigVar<float> xOxygenPos;
+        ConfigVar<float> yOxygenPos;
+        ConfigVar<float> xSyncMeterPos;
+        ConfigVar<float> ySyncMeterPos;
+        ConfigVar<float> xAllButtonsPos;
+        ConfigVar<float> yAllButtonsPos;
+        ConfigVar<float> xBtnAPos;
+        ConfigVar<float> yBtnAPos;
+        ConfigVar<float> xTextAPos;
+        ConfigVar<float> yTextAPos;
+        ConfigVar<float> xSyncAPos;
+        ConfigVar<float> ySyncAPos;
+        ConfigVar<float> xBtnBPos;
+        ConfigVar<float> yBtnBPos;
+        ConfigVar<float> xItemBPos;
+        ConfigVar<float> yItemBPos;
+        ConfigVar<float> xTextBPos;
+        ConfigVar<float> yTextBPos;
+        ConfigVar<float> xSyncBPos;
+        ConfigVar<float> ySyncBPos;
+        ConfigVar<float> xBtnXPos;
+        ConfigVar<float> yBtnXPos;
+        ConfigVar<float> xItemXPos;
+        ConfigVar<float> yItemXPos;
+        ConfigVar<float> xTextXPos;
+        ConfigVar<float> yTextXPos;
+        ConfigVar<float> xSyncXPos;
+        ConfigVar<float> ySyncXPos;
+        ConfigVar<float> xBtnYPos;
+        ConfigVar<float> yBtnYPos;
+        ConfigVar<float> xItemYPos;
+        ConfigVar<float> yItemYPos;
+        ConfigVar<float> xTextYPos;
+        ConfigVar<float> yTextYPos;
+        ConfigVar<float> xSyncYPos;
+        ConfigVar<float> ySyncYPos;
+        ConfigVar<float> xBtnZPos;
+        ConfigVar<float> yBtnZPos;
+        ConfigVar<float> xItemZPos;
+        ConfigVar<float> yItemZPos;
+        ConfigVar<float> xTextZPos;
+        ConfigVar<float> yTextZPos;
+        ConfigVar<float> xSyncZPos;
+        ConfigVar<float> ySyncZPos;
+        ConfigVar<float> xMidonaPos;
+        ConfigVar<float> yMidonaPos;
+        ConfigVar<float> xDPadPos;
+        ConfigVar<float> yDPadPos;
+        ConfigVar<float> xDPadPos2;
+        ConfigVar<float> yDPadPos2;
+        ConfigVar<float> xHeartPos;
+        ConfigVar<float> yHeartPos;
+        ConfigVar<float> xRupeePos;
+        ConfigVar<float> yRupeePos;
+        ConfigVar<float> xRupeeTextPos;
+        ConfigVar<float> yRupeeTextPos;
+        ConfigVar<float> xMinMap;
+        ConfigVar<float> yMinMap;
+        ConfigVar<bool> enableShieldDurability;
         ConfigVar<bool> enableTWWHDArmor;
         ConfigVar<bool> enableManualShielding;
         ConfigVar<bool> enableMirrorMode;

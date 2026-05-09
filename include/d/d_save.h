@@ -123,6 +123,7 @@ enum {
     /* 0x3 */ SELECT_ITEM_B,
     /* 0x0 */ SELECT_ITEM_X = SELECT_ITEM_LEFT,
     /* 0x1 */ SELECT_ITEM_Y = SELECT_ITEM_RIGHT,
+    /* 0x6 */ SELECT_ITEM_Z,
 };
 
 enum {

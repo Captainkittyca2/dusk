@@ -12,9 +12,11 @@ namespace dusk {
         ImGuiCatDeluxe();
         void draw();
         void ShowMetersColor();
+        void ShowUIPositionsWindow();
 
     private:
         bool m_showColorMeter = false;
+        bool m_showUIPosition = false;
     };
 }
 

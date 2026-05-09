@@ -8,6 +8,8 @@
 #include "d/actor/d_a_obj_gra2.h"
 #include "d/actor/d_a_npc_kn.h"
 
+bool brokeTheGuard = false;
+
 BOOL daAlink_c::checkEnemyGroup(fopAc_ac_c* i_actor) {
     return i_actor != NULL
             && (fopAcM_GetGroup(i_actor) == fopAc_ENEMY_e || fopAcM_GetName(i_actor) == fpcNm_E_ZH_e || checkSpecialNpc(i_actor));
@@ -237,6 +239,15 @@ void daAlink_c::setSmallGuard(dCcD_GObjInf* i_objinf) {
 }
 
 int daAlink_c::procGuardSlipInit(int i_atSpl, dCcD_GObjInf* i_objinf) {
+    if (dusk::getSettings().game.enableShieldDurability) {
+        bool breakCheck = dusk::shieldDurability(g_dComIfG_gameInfo.info.mSavedata.getPlayer().getPlayerStatusA().getSelectEquip(2) - 0x2a, false);
+
+        if (breakCheck == false) {
+            brokeTheGuard = true;
+            procGuardBreakInit();
+            return 0;
+        }
+    }
     if (mProcID == PROC_GUARD_SLIP) {
         return 0;
     }
@@ -503,6 +514,12 @@ int daAlink_c::procGuardBreakInit() {
     field_0x3588 = l_halfAtnWaitBaseAnime;
     dComIfGp_getVibration().StartShock(VIBMODE_S_POWER5, 0x1F, cXyz(0.0f, 1.0f, 0.0f));
     voiceStart(Z2SE_AL_V_GUARD_BROKEN);
+    if (dusk::getSettings().game.enableShieldDurability) {
+        if (brokeTheGuard == false && dComIfGs_getSelectEquipShield() != 0xff) {
+            dusk::shieldDurability(dComIfGs_getSelectEquipShield() - 0x2a, true);
+        }
+        brokeTheGuard = false;
+    }
     return 1;
 }
 

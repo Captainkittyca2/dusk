@@ -328,8 +328,8 @@
       ],
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install",
-        "CMAKE_TOOLCHAIN_FILE": "$env{ANDROID_HOME}/ndk/$env{ANDROID_NDK_VERSION}/build/cmake/android.toolchain.cmake",
-        "ANDROID_PLATFORM": "android-28"
+        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files (x86)/Android/AndroidNDK/android-ndk-r23c/build/cmake/android.toolchain.cmake",
+        "ANDROID_PLATFORM": "android-24"
       }
     },
     {

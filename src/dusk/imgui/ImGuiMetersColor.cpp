@@ -23,20 +23,20 @@ void DrawMetersColorWindow(bool& open) {
         return;
     }
 
-    if (!ImGui::Begin("Meter Colors", &open)) {
+    if (!ImGui::Begin("Custom Meters Color", &open)) {
         ImGui::End();
         return;
     }
 
     ImGui::SeparatorText("Lantern Meter");
-    DrawColorEdit("Lantern Top", s_meterColorsOverride.lanternCustomTop);
-    DrawColorEdit("Lantern Bottom", s_meterColorsOverride.lanternCustomBottom);
+    DrawColorEdit("Top##Lantern1", s_meterColorsOverride.lanternCustomTop);
+    DrawColorEdit("Bottom##Lantern2", s_meterColorsOverride.lanternCustomBottom);
     ImGui::SeparatorText("Oxygen Meter (Full)");
-    DrawColorEdit("Oxygen Top", s_meterColorsOverride.oxygen1CustomTop);
-    DrawColorEdit("Oxygen Bottom", s_meterColorsOverride.oxygen1CustomBottom);
+    DrawColorEdit("Top##Oxygen11", s_meterColorsOverride.oxygen1CustomTop);
+    DrawColorEdit("Bottom##Oxygen12", s_meterColorsOverride.oxygen1CustomBottom);
     ImGui::SeparatorText("Oxygen Meter (Low)");
-    DrawColorEdit("Oxygen Top (Low)", s_meterColorsOverride.oxygen2CustomTop);
-    DrawColorEdit("Oxygen Bottom (Low)", s_meterColorsOverride.oxygen2CustomBottom);
+    DrawColorEdit("Top##Oxygen21", s_meterColorsOverride.oxygen2CustomTop);
+    DrawColorEdit("Bottom##Oxygen22", s_meterColorsOverride.oxygen2CustomBottom);
     if (ImGui::MenuItem("Reset meter colors to default")) {
         ResetToDefaultMeterColors();
     }

@@ -50,6 +50,8 @@
 #include "d/actor/d_a_canoe.h"
 #include "d/actor/d_a_ni.h"
 #include "d/d_s_play.h"
+#include "d/d_meter2.h"
+#include "d/d_meter2_info.h"
 
 #include "dusk/settings.h"
 #include "res/Object/Alink.h"
@@ -5094,6 +5096,14 @@ int daAlink_c::create() {
     #endif
 
     fopAcM_create(fpcNm_MIDNA_e, midna_prm, &current.pos, fopAcM_GetRoomNo(this), &shape_angle, NULL, -1);
+    if (dusk::saveInfoDurabilityPtr->objectStored != 0) {
+        cXyz createTemp_pos;
+        csXyz createTemp_angle = shape_angle;
+        createTemp_angle.x = dusk::saveInfoDurabilityPtr->objCarryItems;
+        createTemp_angle.z = dusk::saveInfoDurabilityPtr->objCarryParams;
+        createTemp_pos.x = 10000.0f; createTemp_pos.y = -90000.0f; createTemp_pos.z = 10000.0f;
+        fopAcM_create(dusk::saveInfoDurabilityPtr->objectStored, dusk::saveInfoDurabilityPtr->objectParams, &createTemp_pos, fopAcM_GetRoomNo(this), &createTemp_angle, NULL, -1);
+    }
     checkSetNpcTks(&current.pos, fopAcM_GetRoomNo(this), 1);
 
     if (startPoint == -4 && dComIfGp_TargetWarpPt_get() != 0xFF && !dComIfGp_TransportWarp_check()) {
@@ -9354,7 +9364,8 @@ BOOL daAlink_c::spActionTrigger() {
 }
 
 BOOL daAlink_c::midnaTalkTrigger() const {
-    return mItemTrigger & BTN_Z;
+    if (!dusk::getSettings().game.enableZButtonItems) return mItemTrigger & BTN_Z;
+    return mDoCPd_c::getTrigLeft(PAD_1); 
 }
 
 BOOL daAlink_c::swordSwingTrigger() {
@@ -11278,15 +11289,29 @@ BOOL daAlink_c::checkUpperItemActionFly() {
     return checkCanoeJumpRide();
 }
 
+u8 ZItemsMatrix[3][2] = {
+    {1, 2},
+    {0, 2},
+    {0, 1}
+};
+
 void daAlink_c::checkItemButtonChange() {
     if (mProcID != PROC_CANOE_PADDLE_PUT && mEquipItem != dItemNo_NONE_e && !checkEquipAnime()) {
-        u8 temp_r0;
-        for (u8 i = 0; i < 2; i++) {
-            temp_r0 = (i + 1) % 2;
-            if (mEquipItem == dComIfGp_getSelectItem(i) &&
-                (mEquipItem != dComIfGp_getSelectItem(temp_r0) || mSelectItemId != temp_r0))
-            {
-                mSelectItemId = i;
+        if (!dusk::getSettings().game.enableZButtonItems) {
+            u8 temp_r0;
+            for (u8 i = 0; i < 2; i++) {
+                temp_r0 = (i + 1) % 2;
+                if (mEquipItem == dComIfGp_getSelectItem(i) &&
+                    (mEquipItem != dComIfGp_getSelectItem(temp_r0) || mSelectItemId != temp_r0))
+                {
+                    mSelectItemId = i;
+                }
+            }
+        } else {
+            for (u8 i = 0; i < 3; i++) {
+                if (mEquipItem == dComIfGp_getSelectItem(i) && ((mEquipItem != dComIfGp_getSelectItem(ZItemsMatrix[i][0]) && mEquipItem != dComIfGp_getSelectItem(ZItemsMatrix[i][1])) || (mSelectItemId != ZItemsMatrix[i][0] && mSelectItemId != ZItemsMatrix[i][1]))) {
+                    mSelectItemId = i;
+                }
             }
         }
     }
@@ -11452,7 +11477,7 @@ int daAlink_c::orderTalk(int i_checkZTalk) {
     }
 
     if (!checkWolf() && checkRequestTalkActor(mAttList2, field_0x27f8)) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             // check if pressed X or Y and if item on button is a trade item
             if (checkTradeItem(dComIfGp_getSelectItem(i)) && itemTriggerCheck(1 << i)) {
                 fopAcM_orderTalkItemBtnEvent(itemTalkType[i], this, field_0x27f8, 0, 0);
@@ -12100,7 +12125,7 @@ void daAlink_c::allUnequip(BOOL param_0) {
     if (checkNoResetFlg2(FLG2_UNK_1) && param_0 && !checkCanoeRide() &&
         mEquipItem != dItemNo_KANTERA_e)
     {
-        for (u8 i = 0; i < 2; i++) {
+        for (u8 i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             if (dComIfGp_getSelectItem(i) == dItemNo_KANTERA_e) {
                 mSelectItemId = i;
             }
@@ -12152,7 +12177,7 @@ BOOL daAlink_c::checkItemChangeFromButton() {
             itemEquip(0x105);
         } else {
             u8 i;
-            for (i = 0; i < 2; i++) {
+            for (i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
                 int proc_type = checkNewItemChange(i);
                 if (proc_type != 0 && itemTriggerCheck(1 << i)) {
                     BOOL var_r27 = changeItemTriggerKeepProc(i, proc_type);
@@ -12173,7 +12198,7 @@ BOOL daAlink_c::checkItemChangeFromButton() {
             } else if (mEquipItem == dItemNo_NONE_e && mThrowBoomerangAcKeep.getActor() == NULL &&
                        !checkCanoeRide() && checkNoUpperAnime() && checkNoResetFlg2(FLG2_UNK_1))
             {
-                for (i = 0; i < 2; i++) {
+                for (i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
                     if (dComIfGp_getSelectItem(i) == dItemNo_KANTERA_e) {
                         mSelectItemId = i;
                     }
@@ -12185,7 +12210,7 @@ BOOL daAlink_c::checkItemChangeFromButton() {
                        mEquipItem != 0x102 && (!checkCanoeRide() || !checkFisingRodLure()))
             {
                 if (!checkEventRun() || strcmp(dComIfGp_getEventManager().getRunEventName(), "ANGER") != 0) {
-                    if (strcmp(dComIfGp_getEventManager().getRunEventName(), "ANGER2") != 0 && checkItemSetButton(mEquipItem) == 2) {
+                    if (strcmp(dComIfGp_getEventManager().getRunEventName(), "ANGER2") != 0 && checkItemSetButton(mEquipItem) == (2 + dusk::getSettings().game.enableZButtonItems)) {
                         allUnequip(1);
                     }
                 }
@@ -14379,7 +14404,7 @@ BOOL daAlink_c::checkGroupItem(int i_itemNo, int i_selItem) const {
 }
 
 int daAlink_c::checkSetItemTrigger(int i_itemNo) {
-    for (u8 i = 0; i < 2; i++) {
+    for (u8 i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (checkGroupItem(i_itemNo, dComIfGp_getSelectItem(i)) && itemTriggerCheck(1 << i)) {
             if (i_itemNo != dItemNo_HVY_BOOTS_e) {
                 mSelectItemId = i;
@@ -14392,13 +14417,13 @@ int daAlink_c::checkSetItemTrigger(int i_itemNo) {
 }
 
 int daAlink_c::checkItemSetButton(int i_itemNo) {
-    for (u8 i = 0; i < 2; i++) {
+    for (u8 i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
         if (checkGroupItem(i_itemNo, dComIfGp_getSelectItem(i))) {
             return i;
         }
     }
 
-    return 2;
+    return 2 + dusk::getSettings().game.enableZButtonItems;
 }
 
 bool daAlink_c::checkField() {
@@ -14598,7 +14623,7 @@ int daAlink_c::checkNewItemChange(u8 i_selItemIdx) {
                 return ITEM_PROC_BOTTLE_DRINK;
             }
 
-            if (checkOilBottleItem(sel_item) && checkItemSetButton(dItemNo_KANTERA_e) != 2) {
+            if (checkOilBottleItem(sel_item) && checkItemSetButton(dItemNo_KANTERA_e) != (2 + dusk::getSettings().game.enableZButtonItems)) {
                 return ITEM_PROC_KANDELAAR_POUR;
             }
         } else if (sel_item == dItemNo_HVY_BOOTS_e) {
@@ -14643,7 +14668,7 @@ int daAlink_c::checkNewItemChange(u8 i_selItemIdx) {
                     return ITEM_PROC_SPINNER_READY;
                 } else if (checkDungeonWarpItem(sel_item)) {
                     return ITEM_PROC_DUNGEON_WARP_READY;
-                } else if (checkItemSetButton(0x108) != 2 &&
+                } else if (checkItemSetButton(0x108) != (2 + dusk::getSettings().game.enableZButtonItems) &&
                            (sel_item == dItemNo_WORM_e || sel_item == dItemNo_BEE_CHILD_e))
                 {
                     int itemNo = dComIfGp_getSelectItem(checkItemSetButton(0x108));
@@ -14667,7 +14692,7 @@ int daAlink_c::checkNewItemChange(u8 i_selItemIdx) {
                     return ITEM_PROC_NOT_USE_ITEM;
                 } else if (sel_item == dItemNo_HORSE_FLUTE_e) {
                     return ITEM_PROC_GRASS_WHISTLE;
-                } else if (checkOilBottleItem(sel_item) && checkItemSetButton(0x48) != 2) {
+                } else if (checkOilBottleItem(sel_item) && checkItemSetButton(0x48) != (2 + dusk::getSettings().game.enableZButtonItems)) {
                     return ITEM_PROC_KANDELAAR_POUR;
                 } else if (sel_item == dItemNo_HAWK_EYE_e) {
                     if (acceptSubjectModeChange()) {
@@ -17735,6 +17760,8 @@ int daAlink_c::procGoronRideWait() {
     return 1;
 }
 
+uint8_t burnShield = 0;
+
 int daAlink_c::execute() {
     loadModelDVD();
 
@@ -17776,7 +17803,7 @@ int daAlink_c::execute() {
 
     if (checkNoResetFlg2(FLG2_UNK_1) != FALSE &&
         mEquipItem != dItemNo_KANTERA_e &&
-        checkItemSetButton(dItemNo_KANTERA_e) == 2) {
+        checkItemSetButton(dItemNo_KANTERA_e) == (2 + dusk::getSettings().game.enableZButtonItems)) {
         offKandelaarModel();
     }
 
@@ -18165,7 +18192,7 @@ int daAlink_c::execute() {
 
         if (checkEquipHeavyBoots()) {
             int itemButton = checkItemSetButton(dItemNo_HVY_BOOTS_e);
-            if (itemButton == 2 || checkNotHeavyBootsStage()) {
+            if (itemButton == (2 + dusk::getSettings().game.enableZButtonItems) || checkNotHeavyBootsStage()) {
                 if (!dComIfGp_checkPlayerStatus1(0, 0x10000) || !checkHookshotRoofLv7Boss()) {
                     setHeavyBoots(0);
                 }
@@ -18489,22 +18516,35 @@ int daAlink_c::execute() {
 
                 if (field_0x2fcb != 0) {
                     if (checkWoodShieldEquip() && mWaterY < mShieldModel->getBaseTRMtx()[1][3]) {
-                        field_0x2fcb--;
-
-                        if (field_0x2fcb == 0) {
-                            dMeter2Info_setShield(dItemNo_NONE_e, true);
-                            stickArrowIncrement(1);
-                            setWoodShieldBurnOutEffect();
-
-                            // "Your shield burned up..."
-                            dMeter2Info_setFloatingMessage(2047, 90, false);
-
-                            if (dStage_stagInfo_GetSaveTbl(dComIfGp_getStage()->getStagInfo()) == dStage_SaveTbl_LV2 &&
-                                !dComIfGs_isItemFirstBit(dItemNo_HYLIA_SHIELD_e))
-                            {
-                                fopAcM_onSwitch(this, 0x6F);
+                        if (dusk::getSettings().game.enableShieldDurability && dComIfGs_getSelectEquipShield() == 0x2A) {
+                            if (dusk::saveInfoDurabilityPtr->woodShieldDurability - 2 >= 0) dusk::saveInfoDurabilityPtr->woodShieldDurability -= 2;
+                            else dusk::saveInfoDurabilityPtr->woodShieldDurability = 0;
+                            burnShield++;
+                            if (burnShield == 30 || dusk::saveInfoDurabilityPtr->woodShieldDurability == 0) {
+                                burnShield = 0;
+                                if (dusk::saveInfoDurabilityPtr->woodShieldDurability == 0) {dusk::saveInfoDurabilityPtr->woodShieldDurability = 255; dMeter2Info_setShield(0xff, true); dMeter2Info_setFloatingMessage(2047, 90, true);}
+                                setWoodShieldBurnOutEffect();
+                                stickArrowIncrement(1);
+                                seStartOnlyReverb(Z2SE_AL_WOOD_SHIELD_BURN);
                             }
-                            seStartOnlyReverb(Z2SE_AL_WOOD_SHIELD_BURN);
+                        } else {
+                            field_0x2fcb--;
+
+                            if (field_0x2fcb == 0) {
+                                dMeter2Info_setShield(dItemNo_NONE_e, true);
+                                stickArrowIncrement(1);
+                                setWoodShieldBurnOutEffect();
+
+                                // "Your shield burned up..."
+                                dMeter2Info_setFloatingMessage(2047, 90, false);
+
+                                if (dStage_stagInfo_GetSaveTbl(dComIfGp_getStage()->getStagInfo()) == dStage_SaveTbl_LV2 &&
+                                    !dComIfGs_isItemFirstBit(dItemNo_HYLIA_SHIELD_e))
+                                {
+                                    fopAcM_onSwitch(this, 0x6F);
+                                }
+                                seStartOnlyReverb(Z2SE_AL_WOOD_SHIELD_BURN);
+                            }
                         }
                     } else {
                         clearWoodShieldBurnEffect();
@@ -18686,18 +18726,32 @@ int daAlink_c::execute() {
             }
 
             if (!checkWolf()) {
-                u8 tmp;
-                for (u8 i = 0; i < 2; i++) {
-                    tmp = (i + 1) % 2;
-                    if (dComIfGp_getSelectItem(i) == dItemNo_EMPTY_BOTTLE_e && (mUseButtonFlags & (1 << i)) &&
-                        dComIfGp_getSelectItem(tmp) == dItemNo_EMPTY_BOTTLE_e)
-                    {
-                        mUseButtonFlags |= (u8)(1 << tmp);
+                if (!dusk::getSettings().game.enableZButtonItems) {
+                    u8 tmp;
+                    for (u8 i = 0; i < 2; i++) {
+                        tmp = (i + 1) % 2;
+                        if (dComIfGp_getSelectItem(i) == dItemNo_EMPTY_BOTTLE_e && (mUseButtonFlags & (1 << i)) &&
+                            dComIfGp_getSelectItem(tmp) == dItemNo_EMPTY_BOTTLE_e)
+                        {
+                            mUseButtonFlags |= (u8)(1 << tmp);
+                        }
+                    }
+                } else {
+                    for (u8 i = 0; i < 3; i++) {
+                        if (dComIfGp_getSelectItem(i) == dItemNo_EMPTY_BOTTLE_e && (mUseButtonFlags & (1 << i)) &&
+                            (dComIfGp_getSelectItem(ZItemsMatrix[i][0]) == dItemNo_EMPTY_BOTTLE_e && dComIfGp_getSelectItem(ZItemsMatrix[i][1]) == dItemNo_EMPTY_BOTTLE_e)) {
+                            if (dComIfGp_getSelectItem(ZItemsMatrix[i][0]) == dItemNo_EMPTY_BOTTLE_e) {
+                                mUseButtonFlags |= (u8)(1 + ZItemsMatrix[i][0]);
+                            }
+                            else if (dComIfGp_getSelectItem(ZItemsMatrix[i][1]) == dItemNo_EMPTY_BOTTLE_e) {
+                                mUseButtonFlags |= (u8)(1 + ZItemsMatrix[i][1]);
+                            }
+                        }
                     }
                 }
             }
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
                 if (!(mUseButtonFlags & (1 << i)) && !(field_0x2faf & (1 << i))) {
                     dMeter2Info_offUseButton(METER2_USEBUTTON_X << i);
                 }
@@ -18860,6 +18914,7 @@ int daAlink_c::execute() {
 
     #if TARGET_PC
     handleArmorsQuickToggle();
+    handleObjectStoring();
     #endif
 
     return 1;

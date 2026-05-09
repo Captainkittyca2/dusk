@@ -7,6 +7,7 @@
 #include "d/actor/d_a_obj_swchain.h"
 #include "d/actor/d_a_obj_movebox.h"
 #include "d/actor/d_a_obj_gra2.h"
+#include "dusk/logging.h"
 
 static bool daAlink_checkLightBallA(fopAc_ac_c* i_actor) {
     daObjCarry_c* carry = (daObjCarry_c*)i_actor;
@@ -675,6 +676,13 @@ bool daAlink_c::grabLineCheck(cXyz* i_start, cXyz* i_end) {
 }
 
 void daAlink_c::setGrabItemActor(fopAc_ac_c* i_actor) {
+    /*if ((fopAcM_GetName(i_actor) == fpcNm_Obj_Carry_e)) {
+        DuskLog.info("{}", (((daObjCarry_c*)i_actor)->field_0xd18 >> 1) & 0x1f);
+        csXyz tempAngleLOL = current.angle;
+        tempAngleLOL.x = ((daObjCarry_c*)i_actor)->mItemNo;
+        tempAngleLOL.z = ((daObjCarry_c*)i_actor)->field_0xd18;
+        fopAcM_create(fpcNm_Obj_Carry_e, i_actor->parameters, &current.pos, 0xFF, &tempAngleLOL, 0, -1);
+    }*/
     fopAcM_setCarryNow(i_actor, TRUE);
     mGrabItemAcKeep.setData(i_actor);
 
