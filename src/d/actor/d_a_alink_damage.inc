@@ -195,8 +195,18 @@ int daAlink_c::setDamagePoint(int i_dmgAmount, BOOL i_checkZoraMag, BOOL i_setDm
         if(dusk::getSettings().game.freeMagicArmor) {
             i_dmgAmount = 0;
         }
+        if (dusk::getSettings().game.enableTWWHDArmor) {
+            if (dComIfGs_getRupee() != 0) {
+                int dmgAmmo = 20 * i_dmgAmount;
+                cXyz create_pos = mLeftHandPos + mRightHandPos;
+                create_pos.x *= 0.5f; create_pos.y *= 0.5f; create_pos.z *= 0.5f;
+                csXyz angle_positioned = current.angle;
+                armorRupeeLossHD(dmgAmmo, create_pos, angle_positioned, scale, dComIfGp_getStartStageRoomNo());
+            }
+        }
 #endif
-        dComIfGp_setItemRupeeCount(-i_dmgAmount * 10);
+        if (!dusk::getSettings().game.enableTWWHDArmor) dComIfGp_setItemRupeeCount(-i_dmgAmount * 10);
+        else dComIfGp_setItemRupeeCount(-i_dmgAmount * 20);
     } else
     #if DEBUG
     if (!mpHIO->mDamage.m.mInvincible && g_debugHpMode == 0)

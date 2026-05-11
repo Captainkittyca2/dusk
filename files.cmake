@@ -1436,6 +1436,7 @@ set(DUSK_FILES
         src/dusk/logging.cpp
         src/dusk/settings.cpp
         src/dusk/stubs.cpp
+        src/dusk/ShieldDurability.cpp
         src/dusk/update_check.cpp
         src/dusk/update_check.hpp
         #src/dusk/m_Do_ext_dusk.cpp
@@ -1450,6 +1451,12 @@ set(DUSK_FILES
         src/dusk/imgui/ImGuiBloomWindow.hpp
         src/dusk/imgui/ImGuiMenuTools.cpp
         src/dusk/imgui/ImGuiMenuTools.hpp
+        src/dusk/imgui/ImGuiCatDeluxe.cpp
+        src/dusk/imgui/ImGuiCatDeluxe.hpp
+        src/dusk/imgui/ImGuiMetersColor.cpp
+        src/dusk/imgui/ImGuiMetersColor.hpp
+        src/dusk/imgui/ImGuiUIPosition.cpp
+        src/dusk/imgui/ImGuiUIPosition.hpp
         src/dusk/imgui/ImGuiProcessOverlay.cpp
         src/dusk/imgui/ImGuiCameraOverlay.cpp
         src/dusk/imgui/ImGuiHeapOverlay.cpp

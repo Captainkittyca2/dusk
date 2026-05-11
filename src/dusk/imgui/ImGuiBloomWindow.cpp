@@ -3,7 +3,7 @@
 #include "imgui.h"
 
 #include "ImGuiBloomWindow.hpp"
-#include "ImGuiMenuTools.hpp"
+#include "ImGuiConsole.hpp"
 #include "m_Do/m_Do_graphic.h"
 
 namespace dusk {
@@ -30,25 +30,6 @@ void SyncFromCurrentBloom() {
     s_bloomOverride.blureRatio = bloom->getBlureRatio();
     s_bloomOverride.blendColor = *bloom->getBlendColor();
     s_bloomOverride.monoColor = *bloom->getMonoColor();
-}
-
-u8 ClampToByte(int value) {
-    return static_cast<u8>(std::clamp(value, 0, 255));
-}
-
-void DrawColorEdit(const char* label, GXColor& color) {
-    float colorValue[4] = {
-        color.r / 255.0f,
-        color.g / 255.0f,
-        color.b / 255.0f,
-        color.a / 255.0f,
-    };
-    if (ImGui::ColorEdit4(label, colorValue, ImGuiColorEditFlags_Uint8)) {
-        color.r = ClampToByte(static_cast<int>(colorValue[0] * 255.0f + 0.5f));
-        color.g = ClampToByte(static_cast<int>(colorValue[1] * 255.0f + 0.5f));
-        color.b = ClampToByte(static_cast<int>(colorValue[2] * 255.0f + 0.5f));
-        color.a = ClampToByte(static_cast<int>(colorValue[3] * 255.0f + 0.5f));
-    }
 }
 }  // namespace
 

@@ -2,6 +2,7 @@
 #define D_EVENT_D_EVENT_H
 
 #include "d/actor/d_a_itembase.h"
+#include "dusk/settings.h"
 
 int dEv_defaultSkipProc(void* actor, int parameter);
 int dEv_defaultSkipZev(void* actor, int parameter);
@@ -47,6 +48,7 @@ enum dEvt_type_e {
     /* 0x5 */ dEvt_type_ITEM_e,
     /* 0x6 */ dEvt_type_SHOWITEM_X_e,
     /* 0x7 */ dEvt_type_SHOWITEM_Y_e,
+    /* 0x8 */ dEvt_type_SHOWITEM_Z_e,
     /* 0xA */ dEvt_type_CATCH_e = 10,
     /* 0xB */ dEvt_type_TREASURE_e,
 };
@@ -148,7 +150,7 @@ public:
 #if PLATFORM_WII || PLATFORM_SHIELD
         return mTalkXyType == 1 || mTalkXyType == 2 || mTalkXyType == 3 || mTalkXyType == 4;
 #else
-        return mTalkXyType == 1 || mTalkXyType == 2;
+        return mTalkXyType == 1 || mTalkXyType == 2 || (mTalkXyType == 3 && dusk::getSettings().game.enableZButtonItems);
 #endif
     }
     u8 getPreItemNo() { return mPreItemNo; }

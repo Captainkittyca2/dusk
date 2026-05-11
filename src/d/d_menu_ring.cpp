@@ -244,7 +244,9 @@ dMenu_Ring_c::dMenu_Ring_c(JKRExpHeap* i_heap, STControl* i_stick, CSTControl* i
         if (dComIfGs_getSelectItemIndex(1) == dComIfGs_getLineUpItem(i)) {
             mYButtonSlot = i;
         }
-        if (dComIfGs_getSelectItemIndex(2) == dComIfGs_getWolfAbility(i)) {
+        if (!dusk::getSettings().game.enableZButtonItems) {
+            if (dComIfGs_getSelectItemIndex(2) == dComIfGs_getWolfAbility(i)) field_0x6ac = i;
+        } else if (dComIfGs_getSelectItemIndex(2) == dComIfGs_getLineUpItem(i)) {
             field_0x6ac = i;
         }
     }
@@ -254,7 +256,7 @@ dMenu_Ring_c::dMenu_Ring_c(JKRExpHeap* i_heap, STControl* i_stick, CSTControl* i
     field_0x634 = 0x10000 / mItemsTotal;
     for (int i = 0; i < MAX_SELECT_ITEM; i++) {
         for (int j = 0; j < 3; j++) {
-            for (int k = 0; k < SELECT_ITEM_NUM; k++) {
+            for (int k = 0; k < SELECT_ITEM_NUM + dusk::getSettings().game.enableZButtonItems; k++) {
                 mpSelectItemTexBuf[i][j][k] = (ResTIMG*)mpHeap->alloc(0xC00, 0x20);
             }
         }
@@ -319,7 +321,7 @@ dMenu_Ring_c::dMenu_Ring_c(JKRExpHeap* i_heap, STControl* i_stick, CSTControl* i
             mItemSlotParam2[i] = (mpItemBuf[i][0]->height / 48.0f * (texScale / 100.0f));
         }
     }
-    mpScreen->search(MULTI_CHAR('r_btn_n'))->hide();
+    /*if (!dusk::getSettings().game.enableZButtonItems)*/ mpScreen->search(MULTI_CHAR('r_btn_n'))->hide();
     if (mPlayerIsWolf) {
         mpScreen->search(MULTI_CHAR('yx_te_s1'))->hide();
         mpScreen->search(MULTI_CHAR('yx_te_s2'))->hide();
@@ -460,7 +462,7 @@ dMenu_Ring_c::~dMenu_Ring_c() {
     dMeter2Info_setItemExplainWindowStatus(0);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
-            for (int k = 0; k < 2; k++) {
+            for (int k = 0; k < 2 + 1/*dusk::getSettings().game.enableZButtonItems*/; k++) {
                 mpHeap->free(mpSelectItemTexBuf[i][j][k]);
                 mpSelectItemTexBuf[i][j][k] = NULL;
             }
@@ -618,6 +620,10 @@ void dMenu_Ring_c::_draw() {
         if (mRingAlpha != ringAlpha) {
             mRingAlpha = ringAlpha;
             mpCircle->setAlphaRate(mRingAlpha);
+        }
+        if (dusk::getSettings().game.enableZButtonItems && ringAlpha == g_ringHIO.mRingAlpha) {
+            g_meter2_info.getMeterClass()->getMeterDrawPtr()->mpButtonXY[2]->setAlphaRate(205.5f);
+            g_meter2_info.getMeterClass()->getMeterDrawPtr()->mpItemXY[2]->setAlpha(205.5f);
         }
         mpCenterParent->setAlphaRate(mAlphaRate);
         mpCenterScreen->draw(mCenterPosX, mCenterPosY, grafPort);
@@ -990,6 +996,10 @@ void dMenu_Ring_c::setItem() {
 
     u8 mixItemIndex0 = dComIfGs_getMixItemIndex(0);
     u8 mixItemIndex1 = dComIfGs_getMixItemIndex(1);
+    u8 mixItemIndex2 = 0;
+    if (dusk::getSettings().game.enableZButtonItems) {
+        mixItemIndex2 = dComIfGs_getMixItemIndex(2);
+    }
 
     for (int i = 0; i < 4; i++) {
         setSelectItemForce(i);
@@ -1027,6 +1037,38 @@ void dMenu_Ring_c::setItem() {
                 mixItemIndex0 = dItemNo_NONE_e;
             }
         }
+        if (dusk::getSettings().game.enableZButtonItems) {
+            uVar1 = dComIfGs_getSelectItemIndex(2);
+            if (mItemSlots[mCurrentSlot] == uVar1) {
+                uVar3 = dComIfGs_getSelectItemIndex(0);
+                mixItemIndex2 = dComIfGs_getMixItemIndex(0);
+                if (uVar3 == dItemNo_NONE_e) {
+                    field_0x6ac = dItemNo_NONE_e;
+                } else {
+                    field_0x6ac = mXButtonSlot;
+                }
+                mXButtonSlot = mCurrentSlot;
+                uVar1 = mItemSlots[mXButtonSlot];
+                mixItemIndex0 = dItemNo_NONE_e;
+            } else {
+                if (dComIfGs_getMixItemIndex(2) == mItemSlots[mCurrentSlot]) {
+                    uVar3 = dComIfGs_getSelectItemIndex(0);
+                    mixItemIndex2 = dItemNo_NONE_e;
+                    if (uVar3 == dItemNo_NONE_e) {
+                        field_0x6ac = dItemNo_NONE_e;
+                    } else {
+                        field_0x6ac = mXButtonSlot;
+                    }
+                    mXButtonSlot = mCurrentSlot;
+                    uVar1 = mItemSlots[mXButtonSlot];
+                    mixItemIndex0 = dItemNo_NONE_e;
+                } else {
+                    mXButtonSlot = mCurrentSlot;
+                    uVar1 = mItemSlots[mXButtonSlot];
+                    mixItemIndex0 = dItemNo_NONE_e;
+                }
+            }
+        }
     } else if (field_0x6b3 == 1) {
         if (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(0)) {
             u8 temp = dComIfGs_getSelectItemIndex(1);
@@ -1058,6 +1100,99 @@ void dMenu_Ring_c::setItem() {
                 mixItemIndex1 = dItemNo_NONE_e;
             }
         }
+        if (dusk::getSettings().game.enableZButtonItems) {
+            if (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(2)) {
+                u8 temp = dComIfGs_getSelectItemIndex(1);
+                uVar3 = temp;
+                mixItemIndex2 = dComIfGs_getMixItemIndex(1);
+                if (temp == dItemNo_NONE_e) {
+                    field_0x6ac = dItemNo_NONE_e;
+                } else {
+                    field_0x6ac = mYButtonSlot;
+                }
+                mYButtonSlot = mCurrentSlot;
+                uVar2 = mItemSlots[mYButtonSlot];
+                mixItemIndex1 = dItemNo_NONE_e;
+            } else {
+                if (dComIfGs_getMixItemIndex(2) == mItemSlots[mCurrentSlot]) {
+                    uVar3 = dComIfGs_getSelectItemIndex(1);
+                    mixItemIndex2 = dItemNo_NONE_e;
+                    if (uVar3 == dItemNo_NONE_e) {
+                        field_0x6ac = dItemNo_NONE_e;
+                    } else {
+                        field_0x6ac = mYButtonSlot;
+                    }
+                    mYButtonSlot = mCurrentSlot;
+                    uVar2 = mItemSlots[mYButtonSlot];
+                    mixItemIndex1 = dItemNo_NONE_e;
+                } else {
+                    mYButtonSlot = mCurrentSlot;
+                    uVar2 = mItemSlots[mYButtonSlot];
+                    mixItemIndex1 = dItemNo_NONE_e;
+                }
+            }
+        }
+    } else if (dusk::getSettings().game.enableZButtonItems && field_0x6b3 == 2) {
+        if (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(0)) {
+            u8 temp = dComIfGs_getSelectItemIndex(2);
+            uVar1 = temp;
+            mixItemIndex0 = dComIfGs_getMixItemIndex(2);
+            if (temp == dItemNo_NONE_e) {
+                mXButtonSlot = dItemNo_NONE_e;
+            } else {
+                mXButtonSlot = field_0x6ac;
+            }
+            field_0x6ac = mCurrentSlot;
+            uVar3 = mItemSlots[field_0x6ac];
+            mixItemIndex2 = dItemNo_NONE_e;
+        } else {
+            if (dComIfGs_getMixItemIndex(0) == mItemSlots[mCurrentSlot]) {
+                uVar1 = dComIfGs_getSelectItemIndex(2);
+                mixItemIndex0 = dItemNo_NONE_e;
+                if (uVar1 == dItemNo_NONE_e) {
+                    mXButtonSlot = dItemNo_NONE_e;
+                } else {
+                    mXButtonSlot = field_0x6ac;
+                }
+                field_0x6ac = mCurrentSlot;
+                uVar3 = mItemSlots[field_0x6ac];
+                mixItemIndex2 = dItemNo_NONE_e;
+            } else {
+                field_0x6ac = mCurrentSlot;
+                uVar3 = mItemSlots[field_0x6ac];
+                mixItemIndex2 = dItemNo_NONE_e;
+            }
+        }
+        if (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(1)) {
+            u8 temp = dComIfGs_getSelectItemIndex(2);
+            uVar2 = temp;
+            mixItemIndex1 = dComIfGs_getMixItemIndex(2);
+            if (temp == dItemNo_NONE_e) {
+                mYButtonSlot = dItemNo_NONE_e;
+            } else {
+                mYButtonSlot = field_0x6ac;
+            }
+            field_0x6ac = mCurrentSlot;
+            uVar3 = mItemSlots[field_0x6ac];
+            mixItemIndex2 = dItemNo_NONE_e;
+        } else {
+            if (dComIfGs_getMixItemIndex(1) == mItemSlots[mCurrentSlot]) {
+                uVar2 = dComIfGs_getSelectItemIndex(2);
+                mixItemIndex1 = dItemNo_NONE_e;
+                if (uVar2 == dItemNo_NONE_e) {
+                    mYButtonSlot = dItemNo_NONE_e;
+                } else {
+                    mYButtonSlot = field_0x6ac;
+                }
+                field_0x6ac = mCurrentSlot;
+                uVar3 = mItemSlots[field_0x6ac];
+                mixItemIndex2 = dItemNo_NONE_e;
+            } else {
+                field_0x6ac = mCurrentSlot;
+                uVar3 = mItemSlots[field_0x6ac];
+                mixItemIndex2 = dItemNo_NONE_e;
+            }
+        }
     }
     field_0x6b4[0] = uVar1;
     field_0x6b4[1] = uVar2;
@@ -1065,7 +1200,7 @@ void dMenu_Ring_c::setItem() {
     field_0x6b4[3] = uVar4;
     field_0x6b8[0] = mixItemIndex0;
     field_0x6b8[1] = mixItemIndex1;
-    field_0x6b8[2] = dItemNo_NONE_e;
+    if (dusk::getSettings().game.enableZButtonItems) field_0x6b8[2] = mixItemIndex2;
     field_0x6b8[3] = dItemNo_NONE_e;
     field_0x6cd = dItemNo_NONE_e;
     setJumpItem(true);
@@ -1073,7 +1208,7 @@ void dMenu_Ring_c::setItem() {
 
 void dMenu_Ring_c::setJumpItem(bool i_useVibrationM) {
     for (int i = 0; i < 4; i++) {
-        if (i == 2) {
+        if (i == 2 && !dusk::getSettings().game.enableZButtonItems) {
             setSelectItem(i, field_0x6b4[i]);
         } else if (i == field_0x6cd) {
             setSelectItem(i, getItem(field_0x6cb, 0));
@@ -1100,6 +1235,7 @@ void dMenu_Ring_c::setJumpItem(bool i_useVibrationM) {
     if (field_0x6b3 == 0) {
         field_0x538[0] = g_ringHIO.mSelectItemScale;
         field_0x538[1] = g_ringHIO.mUnselectItemScale;
+        if (dusk::getSettings().game.enableZButtonItems) field_0x538[2] = g_ringHIO.mUnselectItemScale;
         if (field_0x6b4[0] != dComIfGs_getSelectItemIndex(0) ||
             field_0x6b8[0] != dComIfGs_getMixItemIndex(0))
         {
@@ -1111,6 +1247,7 @@ void dMenu_Ring_c::setJumpItem(bool i_useVibrationM) {
     } else if (field_0x6b3 == 1) {
         field_0x538[0] = g_ringHIO.mUnselectItemScale;
         field_0x538[1] = g_ringHIO.mSelectItemScale;
+        if (dusk::getSettings().game.enableZButtonItems) field_0x538[2] = g_ringHIO.mUnselectItemScale;
         if (field_0x6b4[1] != dComIfGs_getSelectItemIndex(1) ||
             field_0x6b8[1] != dComIfGs_getMixItemIndex(1))
         {
@@ -1118,6 +1255,15 @@ void dMenu_Ring_c::setJumpItem(bool i_useVibrationM) {
 #if TARGET_PC
             mSelectItemSlideElapsed[1] = 0.0f;
 #endif
+        }
+    } else if (dusk::getSettings().game.enableZButtonItems && field_0x6b3 == 2) {
+        field_0x538[0] = g_ringHIO.mUnselectItemScale;
+        field_0x538[1] = g_ringHIO.mUnselectButtonScale;
+        field_0x538[2] = g_ringHIO.mSelectItemScale;
+        if (field_0x6b4[2] != dComIfGs_getSelectItemIndex(2) ||
+            field_0x6b8[2] != dComIfGs_getMixItemIndex(2))
+        {
+            field_0x674[2] = 1;
         }
     }
     if (field_0x674[0] == 1) {
@@ -1160,7 +1306,7 @@ void dMenu_Ring_c::setScale() {
             }
             setNameString(itemId);
             setItemScale(i, g_ringHIO.mUnselectItemScale);
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                 if (j == field_0x6cf) {
                     setButtonScale(j, g_ringHIO.mSelectButtonScale);
                 } else {
@@ -1180,7 +1326,7 @@ void dMenu_Ring_c::setScale() {
             } else {
                 setItemScale(i, g_ringHIO.mUnselectItemScale);
             }
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2 + dusk::getSettings().game.enableZButtonItems; j++) {
                 setButtonScale(j, g_ringHIO.mUnselectButtonScale);
             }
         }
@@ -1244,7 +1390,19 @@ void dMenu_Ring_c::setActiveCursor() {
                     (this->*stick_init[mStatus])();
                 }
             }
-        } else if (mDoCPd_c::getTrigX(PAD_1) || mDoCPd_c::getTrigY(PAD_1)) {
+        } else if (dusk::getSettings().game.enableZButtonItems && mDoCPd_c::getTrigZ(PAD_1) && !mPlayerIsWolf && item != dItemNo_NONE_e) {
+            for (int i = 0; i < MAX_SELECT_ITEM; i++) {
+                setSelectItemForce(i);
+            }
+            field_0x6b3 = 2;
+            if (!checkCombineBomb(field_0x6b3)) {
+                setItem();
+                if (mpItemExplain->getStatus() == 0) {
+                    setStatus(STATUS_WAIT);
+                    (this->*stick_init[mStatus])();
+                }
+            }
+        } else if (mDoCPd_c::getTrigX(PAD_1) || mDoCPd_c::getTrigY(PAD_1) || (dusk::getSettings().game.enableZButtonItems && mDoCPd_c::getTrigZ(PAD_1))) {
             // If the player is a wolf or somehow manages to access an item slot with no item, error
             Z2GetAudioMgr()->seStart(Z2SE_SYS_ERROR, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
         }
@@ -1256,6 +1414,7 @@ void dMenu_Ring_c::setMixItem() {
     bool bVar1 = false;
     u8 selectItemIndex0 = dComIfGs_getSelectItemIndex(0);
     u8 selectItemIndex1 = dComIfGs_getSelectItemIndex(1);
+    u8 selectItemIndex2 = dComIfGs_getSelectItemIndex(2);
     u8 local_28[4] = {dItemNo_NONE_e, dItemNo_NONE_e, dItemNo_NONE_e, dItemNo_NONE_e};
 
     if (dComIfGs_getMixItemIndex(0) == SLOT_4 &&
@@ -1280,6 +1439,15 @@ void dMenu_Ring_c::setMixItem() {
         field_0x6b3 = 1;
         field_0x6cd = 1;
         bVar1 = true;
+    } else if (dusk::getSettings().game.enableZButtonItems && (dComIfGs_getMixItemIndex(2) == 4 &&
+               mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(2))) {
+        Z2GetAudioMgr()->seStart(Z2SE_SY_ITEM_COMBINE_OFF, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
+        field_0x6cb = selectItemIndex2;
+        selectItemIndex2 = 4;
+        local_28[2] = getCursorPos(4);
+        field_0x6b8[2] = 0xff;
+        field_0x6b3 = 2;
+        field_0x6cd = 2;
     } else {
         switch (item) {
         case dItemNo_NORMAL_BOMB_e:
@@ -1300,6 +1468,9 @@ void dMenu_Ring_c::setMixItem() {
                 if (selectItemIndex1 == mItemSlots[mCurrentSlot]) {
                     selectItemIndex1 = 0xff;
                     mYButtonSlot = 0xff;
+                } else if (dusk::getSettings().game.enableZButtonItems && selectItemIndex2 == mItemSlots[mCurrentSlot]) {
+                    selectItemIndex2 = 0xff;
+                    field_0x6ac = 0xff;
                 }
             } else if ((dComIfGs_getSelectItemIndex(1) == 4 &&
                         dComIfGs_getMixItemIndex(1) == dItemNo_NONE_e) ||
@@ -1316,6 +1487,28 @@ void dMenu_Ring_c::setMixItem() {
                 if (selectItemIndex0 == mItemSlots[mCurrentSlot]) {
                     selectItemIndex0 = 0xff;
                     mXButtonSlot = 0xff;
+                } else if (dusk::getSettings().game.enableZButtonItems && selectItemIndex2 == mItemSlots[mCurrentSlot]) {
+                    selectItemIndex2 = 0xff;
+                    field_0x6ac = 0xff;
+                }
+            } else if (dusk::getSettings().game.enableZButtonItems && ((dComIfGs_getSelectItemIndex(2) == 4 &&
+                        dComIfGs_getMixItemIndex(2) == dItemNo_NONE_e) ||
+                       (dComIfGs_getMixItemIndex(2) == 4)))
+            {
+                Z2GetAudioMgr()->seStart(Z2SE_SY_ITEM_COMBINE_ON, NULL, 0, 0, 1.0f, 1.0f, -1.0f,
+                                         -1.0f, 0);
+                selectItemIndex2 = mItemSlots[mCurrentSlot];
+                field_0x6b8[2] = 4;
+                field_0x6b3 = 2;
+                field_0x6ac = mCurrentSlot;
+                field_0x6cd = 0xff;
+                bVar1 = true;
+                if (selectItemIndex0 == mItemSlots[mCurrentSlot]) {
+                    selectItemIndex0 = 0xff;
+                    mXButtonSlot = 0xff;
+                } else if (selectItemIndex1 == mItemSlots[mCurrentSlot]) {
+                    selectItemIndex1 = 0xff;
+                    mYButtonSlot = 0xff;
                 }
             }
             break;
@@ -1324,12 +1517,16 @@ void dMenu_Ring_c::setMixItem() {
     if (bVar1) {
         field_0x6b4[0] = selectItemIndex0;
         field_0x6b4[1] = selectItemIndex1;
+        if (dusk::getSettings().game.enableZButtonItems) field_0x6b4[2] = selectItemIndex2;
         setJumpItem(false);
         if (local_28[0] != dItemNo_NONE_e) {
             mXButtonSlot = local_28[0];
         }
         if (local_28[1] != dItemNo_NONE_e) {
             mYButtonSlot = local_28[1];
+        }
+        if (dusk::getSettings().game.enableZButtonItems && local_28[2] != dItemNo_NONE_e) {
+            field_0x6ac = local_28[2];
         }
     }
 }
@@ -1660,7 +1857,7 @@ void dMenu_Ring_c::drawSelectItem() {
 }
 
 void dMenu_Ring_c::setSelectItemForce(int i_idx) {
-    if (i_idx == 2) {
+    if (!dusk::getSettings().game.enableZButtonItems && i_idx == 2) {
         if (field_0x674[i_idx] != 0) {
             dComIfGs_setSelectItemIndex(i_idx, field_0x6b4[i_idx]);
             field_0x674[i_idx] = 0;
@@ -1669,7 +1866,7 @@ void dMenu_Ring_c::setSelectItemForce(int i_idx) {
 #endif
         }
     } else if (field_0x674[i_idx] != 0) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2 + dusk::getSettings().game.enableZButtonItems; i++) {
             dComIfGs_setMixItemIndex(i, field_0x6b8[i]);
             dComIfGs_setSelectItemIndex(i, field_0x6b4[i]);
         }
@@ -1802,6 +1999,18 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[1] = dItemNo_HAWK_ARROW_e;
             break;
         }
+        if (dusk::getSettings().game.enableZButtonItems) {
+            switch (item2) {
+            case dItemNo_NORMAL_BOMB_e:
+            case dItemNo_WATER_BOMB_e:
+            case dItemNo_POKE_BOMB_e:
+                local_18[2] = dItemNo_BOMB_ARROW_e;
+                break;
+            case dItemNo_HAWK_EYE_e:
+                local_18[2] = dItemNo_HAWK_ARROW_e;
+                break;
+            }
+        }
         break;
     case dItemNo_NORMAL_BOMB_e:
     case dItemNo_WATER_BOMB_e:
@@ -1810,6 +2019,8 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_BOMB_ARROW_e;
         } else if (item1 == dItemNo_BOW_e) {
             local_18[1] = dItemNo_BOMB_ARROW_e;
+        } else if (dusk::getSettings().game.enableZButtonItems && item2 == dItemNo_BOW_e) {
+            local_18[2] = dItemNo_BOMB_ARROW_e;
         }
         break;
     case dItemNo_HAWK_EYE_e:
@@ -1817,6 +2028,8 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_HAWK_ARROW_e;
         } else if (item1 == dItemNo_BOW_e) {
             local_18[1] = dItemNo_HAWK_ARROW_e;
+        } else if (dusk::getSettings().game.enableZButtonItems && item2 == dItemNo_BOW_e) {
+            local_18[2] = dItemNo_HAWK_ARROW_e;
         }
         break;
     case dItemNo_BEE_CHILD_e:
@@ -1824,6 +2037,8 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_BEE_ROD_e;
         } else if (item1 == dItemNo_FISHING_ROD_1_e) {
             local_18[1] = dItemNo_BEE_ROD_e;
+        } else if (dusk::getSettings().game.enableZButtonItems && item2 == dItemNo_FISHING_ROD_1_e) {
+            local_18[2] = dItemNo_BEE_ROD_e;
         }
         break;
     case dItemNo_WORM_e:
@@ -1831,6 +2046,8 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_WORM_ROD_e;
         } else if (item1 == dItemNo_FISHING_ROD_1_e) {
             local_18[1] = dItemNo_WORM_ROD_e;
+        } else if (dusk::getSettings().game.enableZButtonItems && item2 == dItemNo_FISHING_ROD_1_e) {
+            local_18[2] = dItemNo_WORM_ROD_e;
         }
         break;
     case dItemNo_ZORAS_JEWEL_e:
@@ -1838,6 +2055,8 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_JEWEL_ROD_e;
         } else if (item1 == dItemNo_FISHING_ROD_1_e) {
             local_18[1] = dItemNo_JEWEL_ROD_e;
+        } else if (dusk::getSettings().game.enableZButtonItems && item2 == dItemNo_FISHING_ROD_1_e) {
+            local_18[2] = dItemNo_JEWEL_ROD_e;
         }
         break;
     case dItemNo_FISHING_ROD_1_e:
@@ -1853,6 +2072,14 @@ bool dMenu_Ring_c::checkExplainForce() {
             local_18[0] = dItemNo_WORM_ROD_e;
         } else if (item1 == dItemNo_WORM_e) {
             local_18[1] = dItemNo_WORM_ROD_e;
+        } else if (dusk::getSettings().game.enableZButtonItems) {
+            if (item2 == dItemNo_BEE_CHILD_e) {
+                local_18[2] = dItemNo_BEE_ROD_e;
+            } else if (item2 == dItemNo_ZORAS_JEWEL_e) {
+                local_18[2] = dItemNo_JEWEL_ROD_e;
+            } else if (item2 == dItemNo_WORM_e) {
+                local_18[2] = dItemNo_WORM_ROD_e;
+            }
         }
         break;
     }
@@ -1870,6 +2097,12 @@ bool dMenu_Ring_c::checkExplainForce() {
         field_0x6c7[0] = dItemNo_NONE_e;
         field_0x6c7[1] = local_18[1];
         field_0x6c7[2] = dItemNo_NONE_e;
+        field_0x6c7[3] = dItemNo_NONE_e;
+    } else if (dusk::getSettings().game.enableZButtonItems && local_18[0] == dItemNo_NONE_e && local_18[1] == dItemNo_NONE_e
+                && local_18[2] != dItemNo_NONE_e && local_18[3] == dItemNo_NONE_e && dComIfGs_getMixItemIndex(2) == dItemNo_NONE_e) {
+        field_0x6c7[0] = dItemNo_NONE_e;
+        field_0x6c7[1] = dItemNo_NONE_e;
+        field_0x6c7[2] = local_18[2];
         field_0x6c7[3] = dItemNo_NONE_e;
     } else {
         field_0x6c7[0] = dItemNo_NONE_e;
@@ -1992,6 +2225,11 @@ bool dMenu_Ring_c::isMixItemOn() {
             {
                 return true;
             }
+            if (dusk::getSettings().game.enableZButtonItems && ((dComIfGs_getSelectItemIndex(2) == SLOT_4) && (dComIfGs_getMixItemIndex(2) == dItemNo_NONE_e) ||
+                (dComIfGs_getMixItemIndex(2) == SLOT_4)))
+            {
+                return true;
+            }
             break;
         }
     }
@@ -2007,6 +2245,11 @@ bool dMenu_Ring_c::isMixItemOff() {
         }
         if ((dComIfGs_getMixItemIndex(1) == SLOT_4) &&
             (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(1)))
+        {
+            return 1;
+        }
+        if (dusk::getSettings().game.enableZButtonItems && ((dComIfGs_getMixItemIndex(2) == SLOT_4) &&
+            (mItemSlots[mCurrentSlot] == dComIfGs_getSelectItemIndex(2))))
         {
             return 1;
         }

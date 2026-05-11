@@ -39,6 +39,8 @@ public:
         /* 0x1 */ X_STATUS,
         /* 0x2 */ Y_ITEM,
         /* 0x3 */ Y_STATUS,
+        /* 0x4 */ Z_ITEM,
+        /* 0x5 */ Z_STATUS,
     };
 
     int _create();
@@ -100,7 +102,7 @@ public:
     bool isShowFlag(int i_no) { return field_0x1e6 & (1 << i_no); }
     void onShowFlag(int i_no) { field_0x1e6 |= (1 << i_no); }
 
-private:
+public:
     /* 0x0FC */ int field_0xfc;
     /* 0x100 */ JKRExpHeap* mpHeap;
     /* 0x104 */ JKRExpHeap* mpSubHeap;
@@ -160,9 +162,9 @@ private:
     /* 0x1CF */ u8 mNunZStatus;
     /* 0x1D0 */ u8 mNunCStatus;
     /* 0x1D1 */ u8 mBottleStatus;
-    /* 0x1D2 */ u8 mItemStatus[4];
-    /* 0x1D6 */ u8 field_0x1d6[2];
-    /* 0x1D8 */ u8 field_0x1d8[2];
+    /* 0x1D2 */ u8 mItemStatus[6];
+    /* 0x1D6 */ u8 field_0x1d6[3];
+    /* 0x1D8 */ u8 field_0x1d8[3];
     /* 0x1DA */ u8 mArrowNum;
     /* 0x1DB */ u8 mPachinkoNum;
     /* 0x1DC */ u8 mDoSetFlag;
@@ -170,6 +172,7 @@ private:
     /* 0x1DE */ u8 mRSetFlag;
     /* 0x1DF */ u8 mXSetFlag;
     /* 0x1E0 */ u8 mYSetFlag;
+                u8 mZSetFlag;
     /* 0x1E1 */ u8 field_0x1e1;
     /* 0x1E2 */ u8 mEquipSword;
     /* 0x1E3 */ u8 field_0x1e3;
@@ -259,14 +262,18 @@ private:
     /* 0x348 */ f32 field_0x348;
     /* 0x34C */ f32 field_0x34c;
     /* 0x350 */ f32 field_0x350;
-    /* 0x354 */ u8 field_0x354[0x360 - 0x354];
+    /* 0x354 */ f32 field_0x354;
+    /* 0x358 */ f32 field_0x358;
+    /* 0x35C */ f32 field_0x35c;
     /* 0x360 */ f32 field_0x360;
     /* 0x364 */ f32 field_0x364;
     /* 0x368 */ f32 field_0x368;
     /* 0x36C */ f32 field_0x36c;
     /* 0x370 */ f32 field_0x370;
     /* 0x374 */ f32 field_0x374;
-    /* 0x378 */ u8 field_0x378[0x384 - 0x378];
+    /* 0x378 */ f32 field_0x378;
+    /* 0x37C */ f32 field_0x37c;
+    /* 0x380 */ f32 field_0x380;
     /* 0x384 */ f32 field_0x384;
     /* 0x388 */ f32 field_0x388;
     /* 0x38C */ f32 field_0x38c;
@@ -277,7 +284,9 @@ private:
     /* 0x3B4 */ f32 field_0x3b4[2];
     /* 0x3BC */ f32 field_0x3bc[2];
     /* 0x3C4 */ f32 field_0x3c4[2];
-    /* 0x3CC */ u8 field_0x3cc[0x3e4 - 0x3CC];
+    /* 0x3CC */ f32 field_0x3cc[2];
+    /* 0x3D4 */ f32 field_0x3d4[2];
+    /* 0x3DC */ f32 field_0x3dc[2];
     /* 0x3E4 */ f32 field_0x3e4;
     /* 0x3E8 */ f32 field_0x3e8;
     /* 0x3EC */ f32 field_0x3ec;

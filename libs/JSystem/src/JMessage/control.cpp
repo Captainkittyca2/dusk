@@ -6,6 +6,8 @@
 #include "JSystem/JSystem.h" // IWYU pragma: keep
 
 #include "JSystem/JMessage/control.h"
+#include "JSystem/JKernel/JKRArchive.h"
+#include "d/d_com_inf_game.h"
 
 JMessage::TControl::TControl()
     : pSequenceProcessor_(NULL),
@@ -92,5 +94,27 @@ bool JMessage::TControl::setMessageCode_inSequence_(JMessage::TProcessor const* 
     pMessageText_begin_ = pResourceCache_->getMessageText_messageEntry(pEntry_);
     pMessageText_current_ = pMessageText_begin_;
     oStack_renderingProcessor_.clear();
+
+    if (dusk::getSettings().game.enableShieldDurability) {
+        //const JMessage::TResource* unk = pProcessor->getResource_groupID(u16GroupID);
+        //if (!unk) return true;
+        //const void* currentInf1 = *reinterpret_cast<void**>(reinterpret_cast<uint32_t>(unk) + 0xC);
+
+        //if (currentInf1 == getZel00BmgInf())
+        //{
+
+            if (shieldBroke) {
+                shieldBroke = false;
+                uint16_t bowDescription = 0xbc0;
+
+                if (u16Index == bowDescription) {
+                    const char* newMessage;
+                    newMessage = "Your shield broke...";
+                    pMessageText_begin_ = newMessage;
+                    pMessageText_current_ = newMessage;
+                }
+            }
+        //}
+    }
     return true;
 }

@@ -4549,6 +4549,10 @@ public:
     /* 0x03850 */ daAlink_procFunc mpProcFunc;
 
 #if TARGET_PC
+    void armorRupeeLossHD(s16 rupeeLostParam, cXyz LinkPosition, csXyz angle_positioned, cXyz theScale,
+                      s8 theRoomCurrent);
+    void handleArmorsQuickToggle();
+    void handleObjectStoring();
     void handleWolfHowl();
     void handleQuickTransform();
     bool checkGyroAimContext();

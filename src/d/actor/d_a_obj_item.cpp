@@ -171,8 +171,14 @@ void daItem_c::CreateInit() {
 
     setCullInfo();
 
-    mWaitTimer = getData().mWaitTime;
-    mDisappearTimer = getData().mDisappearTime;
+    if (armorTimerFast) {
+        mWaitTimer = 0;
+        mDisappearTimer = 45;
+        armorTimerFast = false;
+    } else {
+        mWaitTimer = getData().mWaitTime;
+        mDisappearTimer = getData().mDisappearTime;
+    }
 
     procInitNormal();
     show();
