@@ -1457,6 +1457,7 @@ set(DUSK_FILES
         src/dusk/imgui/ImGuiMetersColor.hpp
         src/dusk/imgui/ImGuiUIPosition.cpp
         src/dusk/imgui/ImGuiUIPosition.hpp
+        src/dusk/imgui/ImGuiActorSpawner.cpp
         src/dusk/imgui/ImGuiProcessOverlay.cpp
         src/dusk/imgui/ImGuiCameraOverlay.cpp
         src/dusk/imgui/ImGuiHeapOverlay.cpp
@@ -1501,6 +1502,8 @@ set(DUSK_FILES
         src/dusk/ui/prelaunch.hpp
         src/dusk/ui/preset.cpp
         src/dusk/ui/preset.hpp
+        src/dusk/ui/reporting.cpp
+        src/dusk/ui/reporting.hpp
         src/dusk/ui/select_button.cpp
         src/dusk/ui/select_button.hpp
         src/dusk/ui/settings.cpp

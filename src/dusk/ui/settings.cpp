@@ -9,6 +9,7 @@
 #include "dusk/file_select.hpp"
 #include "dusk/imgui/ImGuiEngine.hpp"
 #include "dusk/livesplit.h"
+#include "dusk/main.h"
 #include "graphics_tuner.hpp"
 #include "m_Do/m_Do_main.h"
 #include "menu_bar.hpp"
@@ -17,6 +18,10 @@
 #include "pane.hpp"
 #include "prelaunch.hpp"
 #include "ui.hpp"
+
+#if DUSK_ENABLE_SENTRY_NATIVE
+#include "dusk/crash_reporting.h"
+#endif
 
 #include <algorithm>
 
@@ -640,6 +645,10 @@ SettingsWindow::SettingsWindow(bool prelaunch) : mPrelaunch(prelaunch) {
         config_percent_select(leftPane, rightPane, getSettings().game.freeCameraSensitivity,
             "Free Camera Sensitivity", "Adjusts twin-stick camera sensitivity.", 50, 200, 5,
             [] { return !getSettings().game.freeCamera; });
+        addOption("Invert First Person X Axis", getSettings().game.invertFirstPersonXAxis,
+            "Invert horizontal movement while aiming with items or first person camera. Applies to both stick and gyro aiming.");
+        addOption("Invert First Person Y Axis", getSettings().game.invertFirstPersonYAxis,
+            "Invert vertical movement while aiming with items or first person camera. Applies to both stick and gyro aiming.");
 
         leftPane.add_section("Gyro");
         leftPane.register_control(
@@ -946,6 +955,18 @@ SettingsWindow::SettingsWindow(bool prelaunch) : mPrelaunch(prelaunch) {
         auto& rightPane = add_child<Pane>(content, Pane::Type::Uncontrolled);
 
         leftPane.add_section("Dusk");
+#if DUSK_CAN_OPEN_DATA_FOLDER
+        leftPane.register_control(
+            leftPane.add_button("Open Data Folder").on_pressed([] {
+                mDoAud_seStartMenu(kSoundClick);
+                dusk::OpenDataFolder();
+            }),
+            rightPane, [](Pane& pane) {
+                pane.add_text(
+                    "Open the folder where Dusk stores settings, saves, logs, texture "
+                    "replacements, and other app data.");
+            });
+#endif
         leftPane.register_control(
             leftPane.add_select_button({
                 .key = "Notifications",
@@ -1011,16 +1032,24 @@ SettingsWindow::SettingsWindow(bool prelaunch) : mPrelaunch(prelaunch) {
                 pane.add_rml("<br/>Choose which notifications can be displayed.");
             });
 #if DUSK_ENABLE_SENTRY_NATIVE
-        config_bool_select(leftPane, rightPane, getSettings().backend.enableCrashReporting,
-            {.key = "Crash Reporting",
-                .helpText = "Enable automatic reporting of crashes to the developers.<br/><br/>"
-                            "Submissions include logs which may contain sensitive information. "
-                            "Refrain from "
-                            "enabling reporting if you do not agree with the following "
-                            "inclusions:<br/><br/> "
-                            "- Operating System<br/>- CPU Architecture<br/>- GPU Model & Driver "
-                            "Version<br/>"
-                            "- Account Username"});
+        auto& crashReporting = leftPane.add_child<BoolButton>(BoolButton::Props{
+            .key = "Crash Reporting",
+            .getValue =
+                [] { return crash_reporting::get_consent() == crash_reporting::Consent::Given; },
+            .setValue = [](bool enabled) { crash_reporting::set_consent(enabled); },
+            .isDisabled =
+                [] {
+                    return crash_reporting::get_consent() == crash_reporting::Consent::Unavailable;
+                },
+            .isModified = [] { return false; },
+        });
+        leftPane.register_control(crashReporting, rightPane, [](Pane& pane) {
+            pane.clear();
+            pane.add_rml("Dusk can automatically send crash reports to the developers. Crash "
+                         "reports contain the following:<br/>• Operating system version<br/>• CPU "
+                         "architecture<br/>• GPU model & driver version<br/>• File paths (may "
+                         "include account username)<br/>• Stack trace");
+        });
 #endif
         config_bool_select(leftPane, rightPane, getSettings().backend.skipPreLaunchUI,
             {

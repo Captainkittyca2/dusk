@@ -121,6 +121,16 @@ option(DUSK_ENABLE_SENTRY_NATIVE "Enable sentry-native crash reporting support" 
 set(DUSK_SENTRY_DSN "" CACHE STRING "Sentry DSN")
 set(DUSK_SENTRY_ENVIRONMENT "development" CACHE STRING "Sentry environment")
 
+# Edit & Continue
+if (MSVC)
+    if ("${CMAKE_MSVC_DEBUG_INFORMATION_FORMAT}" STREQUAL "" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "EditAndContinue")
+    endif ()
+    if (CMAKE_MSVC_DEBUG_INFORMATION_FORMAT STREQUAL "EditAndContinue")
+        add_link_options("/INCREMENTAL")
+    endif ()
+endif ()
+
 if (DUSK_MOVIE_SUPPORT)
     find_package(libjpeg-turbo 3.0 CONFIG QUIET)
     if (libjpeg-turbo_FOUND)
@@ -150,6 +160,7 @@ if (DUSK_MOVIE_SUPPORT)
             CMAKE_C_COMPILER_LAUNCHER
             CMAKE_MAKE_PROGRAM
             CMAKE_MSVC_RUNTIME_LIBRARY
+            CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
             CMAKE_OSX_ARCHITECTURES
             DEPLOYMENT_TARGET
             ENABLE_ARC
@@ -366,16 +377,6 @@ if (DUSK_ENABLE_DISCORD AND NOT ANDROID AND NOT IOS AND NOT TVOS)
     list(APPEND GAME_COMPILE_DEFS DUSK_DISCORD=1)
 endif ()
 
-# Edit & Continue
-if (MSVC)
-    if ("${CMAKE_MSVC_DEBUG_INFORMATION_FORMAT}" STREQUAL "" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "EditAndContinue")
-    endif ()
-    if (CMAKE_MSVC_DEBUG_INFORMATION_FORMAT STREQUAL "EditAndContinue")
-        add_link_options("/INCREMENTAL")
-    endif ()
-endif ()
-
 if(ANDROID)
     list(APPEND GAME_COMPILE_DEFS TARGET_ANDROID=1)
 endif ()
@@ -443,6 +444,12 @@ target_link_libraries(dusk PRIVATE aurora::main ${GAME_LIBS} ${JSYSTEM_LINK_LIBR
 target_precompile_headers(dusk PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/include/dusk_pch.hpp>")
 if (TARGET crashpad_handler)
     add_dependencies(dusk crashpad_handler)
+    add_custom_command(TARGET dusk POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:crashpad_handler>"
+            "$<TARGET_FILE_DIR:dusk>"
+        COMMENT "Copying crashpad handler"
+    )
 endif ()
 
 if (ANDROID)
