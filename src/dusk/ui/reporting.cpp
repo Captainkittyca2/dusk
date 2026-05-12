@@ -42,13 +42,13 @@ CrashReportWindow::CrashReportWindow() : WindowSmall("modal", "modal-dialog") {
     };
 
     static constexpr OptionInfo kOptions[] = {
-        {"Enable",
-            "Send crash reports to Dusk developers. Reports will include the information described "
-            "above.",
-            [] { crash_reporting::set_consent(true); }},
         {"Disable",
-            "Do not send crash reports. This may make it more difficult to resolve issues you "
-            "encounter.",
+            "Do not send crash reports. Because this is a mod called Cat Deluxe "
+            ".",
+            [] { crash_reporting::set_consent(false); }},
+        {"Disable",
+            "Do not send crash reports. Because this is a mod called Cat Deluxe "
+            ".",
             [] { crash_reporting::set_consent(false); }},
     };
 

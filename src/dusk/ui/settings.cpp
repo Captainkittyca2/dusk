@@ -1036,7 +1036,7 @@ SettingsWindow::SettingsWindow(bool prelaunch) : mPrelaunch(prelaunch) {
             .key = "Crash Reporting",
             .getValue =
                 [] { return crash_reporting::get_consent() == crash_reporting::Consent::Given; },
-            .setValue = [](bool enabled) { crash_reporting::set_consent(enabled); },
+            .setValue = [](bool enabled) { crash_reporting::set_consent(false); },
             .isDisabled =
                 [] {
                     return crash_reporting::get_consent() == crash_reporting::Consent::Unavailable;
@@ -1062,12 +1062,12 @@ SettingsWindow::SettingsWindow(bool prelaunch) : mPrelaunch(prelaunch) {
                 .key = "Show Pipeline Compilation",
                 .helpText = "Show an overlay when shaders are being compiled for your hardware.",
             });
-        config_bool_select(leftPane, rightPane, getSettings().backend.checkForUpdates,
+        /*config_bool_select(leftPane, rightPane, getSettings().backend.checkForUpdates,
             {
-                .key = "Check for Updates",
-                .helpText = "Checks GitHub releases for a new Dusk version on startup.<br/><br/>"
+                .key = "Won't Check for Updates",
+                .helpText = "Won't Check GitHub releases for a new Dusk version on startup.<br/><br/>"
                             "No personal information is transmitted or collected.",
-            });
+            });*/
         config_bool_select(leftPane, rightPane, getSettings().game.pauseOnFocusLost,
             {
                 .key = "Pause On Focus Lost",

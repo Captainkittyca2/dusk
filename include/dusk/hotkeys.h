@@ -18,6 +18,8 @@ constexpr const char* SHOW_MAP_LOADER = "F7";
 constexpr const char* SHOW_STATE_SHARE = "F8";
 constexpr const char* SHOW_DEBUG_CAMERA = "F9";
 constexpr const char* SHOW_AUDIO_DEBUG = "F10";
+constexpr const char* SHOW_METERS_COLORS = "[";
+constexpr const char* SHOW_UI_EDITOR = "]";
 
 constexpr const char* TOGGLE_FULLSCREEN = "F11";
 

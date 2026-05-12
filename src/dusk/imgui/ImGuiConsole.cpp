@@ -272,6 +272,13 @@ namespace dusk {
 
         UpdateSettings();
 
+        if (ImGui::IsKeyPressed(ImGuiKey_Backslash))
+        {
+            if (getSettings().game.enableZButtonItems) getSettings().game.enableZButtonItems.setValue(false);
+            else getSettings().game.enableZButtonItems.setValue(true);
+            zButtonItemsToggle();
+        }
+
         if (ImGui::IsKeyPressed(ImGuiKey_F11)) {
             getSettings().video.enableFullscreen.setValue(!getSettings().video.enableFullscreen);
             VISetWindowFullscreen(getSettings().video.enableFullscreen);

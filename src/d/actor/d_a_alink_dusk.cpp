@@ -194,9 +194,11 @@ void daAlink_c::handleWolfHowl() {
         mDoCPd_c::getCpadInfo(PAD_1).mPressedButtonFlags = 0;
 
         // Ensure that the Z Button is not dimmed
-        if (meterDrawPtr->getButtonZAlpha() != 1.f) {
-            Z2GetAudioMgr()->seStart(Z2SE_SYS_ERROR, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
-            return;
+        if (!dusk::getSettings().game.enableZButtonItems) {
+            if (meterDrawPtr->getButtonZAlpha() != 1.f) {
+                Z2GetAudioMgr()->seStart(Z2SE_SYS_ERROR, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
+                return;
+            }
         }
 
         bool canHowl = false;
@@ -260,9 +262,11 @@ void daAlink_c::handleQuickTransform() {
     }
 
     // Ensure that the Z Button is not dimmed
-    if (meterDrawPtr->getButtonZAlpha() != 1.f) {
-        Z2GetAudioMgr()->seStart(Z2SE_SYS_ERROR, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
-        return;
+    if (!dusk::getSettings().game.enableZButtonItems) {
+        if (meterDrawPtr->getButtonZAlpha() != 1.f) {
+            Z2GetAudioMgr()->seStart(Z2SE_SYS_ERROR, NULL, 0, 0, 1.0f, 1.0f, -1.0f, -1.0f, 0);
+            return;
+        }
     }
 
     // The game will crash if trying to quick transform while holding the Ball and Chain

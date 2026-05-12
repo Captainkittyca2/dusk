@@ -608,6 +608,7 @@ void DrawUIPositionsWindow(bool& open) {
 
 
 void ImGuiCatDeluxe::ShowUIPositionsWindow() {
+    if (!ImGuiConsole::CheckMenuViewToggle(ImGuiKey_RightBracket, m_showUIPosition)) return;
     DrawUIPositionsWindow(m_showUIPosition);
 }
 }  // namespace dusk

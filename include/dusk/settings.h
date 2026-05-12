@@ -6,6 +6,7 @@
 namespace dusk {
 
 bool shieldDurability(u8 shieldType, bool strongAttack);
+void zButtonItemsToggle();
 
 struct MeterColorsOverride {
     GXColor lanternCustomTop = {230, 170, 0, 255};

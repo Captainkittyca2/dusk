@@ -44,6 +44,7 @@ void DrawMetersColorWindow(bool& open) {
 }
 
 void ImGuiCatDeluxe::ShowMetersColor() {
+    if (!ImGuiConsole::CheckMenuViewToggle(ImGuiKey_LeftBracket, m_showColorMeter)) return;
     DrawMetersColorWindow(m_showColorMeter);
 }
 }  // namespace dusk
