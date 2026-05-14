@@ -26,7 +26,7 @@ CrashReportWindow::CrashReportWindow() : WindowSmall("modal", "modal-dialog") {
     auto* intro = append(mDialog, "div");
     intro->SetClass("modal-body", true);
     intro->SetInnerRML(
-        "Dusk can automatically send crash reports to the developers. Crash reports contain the "
+        "Dusklight can automatically send crash reports to the developers. Crash reports contain the "
         "following:"
         "<br/>• Operating system version<br/>• CPU architecture<br/>• GPU model & driver version"
         "<br/>• File paths (may include account username)<br/>• Stack trace<br/><br/>"

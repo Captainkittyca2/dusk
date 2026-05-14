@@ -7,7 +7,6 @@
 
 #include <aurora/aurora.h>
 
-#include "ImGuiMenuGame.hpp"
 #include "ImGuiMenuTools.hpp"
 #include "ImGuiCatDeluxe.hpp"
 #include "dusk/main.h"
@@ -44,8 +43,6 @@ private:
     ImGuiWindow* m_dragScrollWindow = nullptr;
     ImVec2 m_dragScrollLastMousePos = {};
     std::deque<Toast> m_toasts;
-
-    ImGuiMenuGame m_menuGame;
 
     // Keep always last
     ImGuiMenuTools m_menuTools;
