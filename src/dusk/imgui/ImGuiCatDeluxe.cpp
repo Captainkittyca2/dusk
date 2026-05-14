@@ -172,6 +172,10 @@ namespace dusk {
             if (ImGui::IsItemHovered()) {
                 ImGui::SetTooltip("Magic Armor: Only lose rupees when hit\nand rupees are visibly knocked out");
             }
+            if (getSettings().game.enableTWWHDArmor) {
+                ImGui::Text("Magic Armor Damage Multiplier");
+                config::ImGuiSliderInt("##armorMultiplierHD", getSettings().game.HDArmorMultiplier, 1, 8);
+            }
             config::ImGuiCheckbox("Manual Shielding", getSettings().game.enableManualShielding);
             if (ImGui::IsItemHovered()) {
                 ImGui::SetTooltip("Hold R to guard with your shield while targeting.\nHold R and press B while targeting to perform\na shield attack");

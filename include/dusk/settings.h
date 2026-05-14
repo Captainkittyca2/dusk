@@ -207,6 +207,8 @@ struct UserSettings {
         ConfigVar<float> yMinMap;
         ConfigVar<bool> enableShieldDurability;
         ConfigVar<bool> enableTWWHDArmor;
+        ConfigVar<int> HDArmorMultiplier;
+        ConfigVar<bool> imGuiToggleOnOff;
         ConfigVar<bool> enableManualShielding;
         ConfigVar<bool> enableMirrorMode;
         ConfigVar<bool> minimalHUD;

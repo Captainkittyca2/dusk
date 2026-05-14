@@ -295,10 +295,11 @@ namespace dusk {
         }
 
         if (ImGui::GetIO().KeyShift && ImGui::IsKeyPressed(ImGuiKey_F1)) {
-            m_isHidden = !m_isHidden;
+            getSettings().game.imGuiToggleOnOff.setValue(!getSettings().game.imGuiToggleOnOff);
+            config::Save();
         }
         
-        bool showMenu = m_isHidden;
+        bool showMenu = getSettings().game.imGuiToggleOnOff;
 
         // The menu bar renders with ImGuiCol_WindowBg behind it. We just want ImGuiCol_MenuBarBg,
         // so make the window bg fully transparent temporarily

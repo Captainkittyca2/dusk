@@ -111,6 +111,8 @@ UserSettings g_userSettings = {
         .yMinMap {"game.yMinMap", 0.0f},
         .enableShieldDurability {"game.enableShieldDurability", false},
         .enableTWWHDArmor {"game.enableTWWHDArmor", false},
+        .HDArmorMultiplier {"game.HDArmorMultiplier", 1},
+        .imGuiToggleOnOff {"game.imGuiToggleOnOff", true},
         .enableManualShielding {"game.enableManualShielding", false},
         .enableMirrorMode {"game.enableMirrorMode", false},
         .minimalHUD {"game.minimalHUD", false},
@@ -335,6 +337,8 @@ void registerSettings() {
     Register(g_userSettings.game.yMinMap);
     Register(g_userSettings.game.enableShieldDurability);
     Register(g_userSettings.game.enableTWWHDArmor);
+    Register(g_userSettings.game.HDArmorMultiplier);
+    Register(g_userSettings.game.imGuiToggleOnOff);
     Register(g_userSettings.game.enableManualShielding);
     Register(g_userSettings.game.enableArmorsQuickToggle);
     Register(g_userSettings.game.autoSave);
